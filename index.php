@@ -121,11 +121,9 @@ $conn->close();
 </head>
 <body>
 <header>
-    <div class="logo"></div>
-    <nav>
-        <a href="#">Home</a>
-    </nav>
+    <a class="logo" href="index.php"></a>
 </header>
+
 
 <div class="layout">
     <div class="sidebar">
