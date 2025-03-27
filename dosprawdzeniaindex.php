@@ -1,8 +1,8 @@
 <?php
 include("db.php");
-session_start();
 
-$servername = "localhost";// Połączenie z bazą danych
+// Połączenie z bazą danych
+$servername = "localhost";
 $username = "root"; // Zmień na swoje dane
 $password = ""; // Zmień na swoje dane
 $dbname = "baza2"; // Zmień na swoją nazwę bazy danych
@@ -25,8 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
         $file_tmp = $_FILES['attachment']['tmp_name'];
         $file_name = $_FILES['attachment']['name'];
+	    $file_size = $_FILES['attachment']['size']; 
         $file_type = $_FILES['attachment']['type'];
-
+		 $max_size = 5 * 1024 * 1024 * 1024 * 1024 * 1024; 
+         $allowed_video_types = ['video/mp4', 'video/webm', 'video/ogg']; 
         // Zdefiniowanie ścieżki zapisu pliku
         $upload_dir = "uploads/"; // Katalog do zapisu
         $file_path = $upload_dir . basename($file_name);
@@ -107,7 +109,6 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -120,16 +121,33 @@ $conn->close();
     </style>
 </head>
 <body>
+<div id="editPostModal" class="modal">
+    <h3>Edytuj post</h3>
+    <form action="index.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="edit_post">
+        <input type="hidden" id="edit_post_id" name="post_id">
+        
+        <label for="edit_content">Treść posta:</label><br>
+        <textarea id="edit_content" name="content" rows="4" cols="50" required></textarea><br><br>
+        
+        <!-- Pole do edycji załącznika -->
+        <label for="edit_attachment">Załącz plik:</label><br>
+        <input type="file" id="edit_attachment" name="attachment"><br><br>
+
+        <button type="submit">Aktualizuj</button>
+        <button type="button" onclick="closeEditModal()">Anuluj</button>
+    </form>
+</div>
 <header>
+
     <div class="logo"></div>
     <nav>
-        <a href="#">Home</a>
     </nav>
 </header>
 
 <div class="layout">
     <div class="sidebar">
-        <a href="javascript:void(0);" onclick="loadProfile()">Profil<?php echo $_SESSION['email']?></a>
+        <a href="javascript:void(0);" onclick="loadProfile()">Profil</a>
         <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
         <p><a id="logout" href="logout.php">Wyloguj</a></p>
     </div>
@@ -198,29 +216,25 @@ $conn->close();
 
 
         <button class="add-post-btn" onclick="openModal()">Dodaj Post</button>
-
 <div id="postsContainer">
     <?php if (count($posts) > 0): ?>
         <?php foreach ($posts as $post): ?>
-            <div class="post">
+            <div class="post" id="post-<?php echo $post['id']; ?>">
                 <h3><?php echo htmlspecialchars($post['username']); ?></h3>
                 <p><?php echo htmlspecialchars($post['content']); ?></p>
                 <span class="timestamp"><?php echo $post['timestamp']; ?></span>
-                
-                <?php if ($post['file_path']): ?>
+
+                <?php if (!empty($post['file_path'])): ?>
                     <?php
-                        // Sprawdzamy rozszerzenie pliku
                         $file_extension = pathinfo($post['file_path'], PATHINFO_EXTENSION);
                         if (in_array(strtolower($file_extension), ['jpg', 'jpeg', 'png', 'gif'])) {
-                            // Jeśli plik jest obrazem
                             echo '<p><img src="' . htmlspecialchars($post['file_path']) . '" alt="Załączony obraz" style="max-width: 100%; height: auto;"></p>';
                         } else {
-                            // Jeśli plik nie jest obrazem, pokazujemy link do pobrania
                             echo '<p><a href="' . htmlspecialchars($post['file_path']) . '" target="_blank">Pobierz załącznik</a></p>';
                         }
                     ?>
                 <?php endif; ?>
-                
+
                 <div class="options" onclick="toggleOptionsMenu(<?php echo $post['id']; ?>)">
                     &#x22EE;
                     <div id="options-menu-<?php echo $post['id']; ?>" class="options-menu">
@@ -231,7 +245,7 @@ $conn->close();
             </div>
         <?php endforeach; ?>
     <?php else: ?>
-        <p>Brak postów do wyświetlenia.</p>
+        <p class="no-posts">Brak postów do wyświetlenia.</p>
     <?php endif; ?>
 </div>
     </div>
@@ -269,8 +283,9 @@ $conn->close();
             <div class="main-content">
                 <div class="user-info">
                     <h2>Dane użytkownika</h2>
-                    <p><label>Email:</label> <span><?php echo htmlspecialchars($_SESSION['email']); ?></span></p>
-                    <p><label>Numer telefonu:</label> <span><?php echo htmlspecialchars($_SESSION['phone']); ?></span></p>
+                    <p><label>Nazwa Użytkownika:</label> <span>Jan Kowalski </span></p>
+                    <p><label>Email:</label> <span>jan.kowalski@przykład.com</span></p>
+                    <p><label>Numer telefonu:</label> <span>+48 123 456 789</span></p>
                     <p><label>Hasło:</label> <span id="password">********</span> 
                     <span id="wyświetlhasło" class="toggle-password">Pokaż</span></p>
                 </div>
@@ -294,8 +309,10 @@ function loadSettings() {
         <div class="main-content">
             <div class="settings-section">
                 <h2>Ustawienia konta</h2>
+                <label for="username">Nazwa użytkownika:</label>
+                <input type="text" id="username" placeholder="Jan Kowalski">
                 <label for="email">Adres email:</label>
-                <input type="email" id="email" placeholder="<?php echo htmlspecialchars($userEmail); ?>">
+                <input type="email" id="email" placeholder="jan.kowalski@example.com">
                 <label for="password">Nowe hasło:</label>
                 <input type="password" id="password" placeholder="Wpisz nowe hasło">
                 <button>Zapisz zmiany</button>
@@ -370,32 +387,18 @@ function closeModal() {
 }
 
 function editPost(postId) {
-    let newContent = prompt("Edytuj post:");
-    if (newContent) {
-        let form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'index.php';
-        
-        let inputAction = document.createElement('input');
-        inputAction.type = 'hidden';
-        inputAction.name = 'action';
-        inputAction.value = 'edit_post';
-        form.appendChild(inputAction);
-        
-        let inputPostId = document.createElement('input');
-        inputPostId.type = 'hidden';
-        inputPostId.name = 'post_id';
-        inputPostId.value = postId;
-        form.appendChild(inputPostId);
-        
-        let inputContent = document.createElement('textarea');
-        inputContent.name = 'content';
-        inputContent.value = newContent;
-        form.appendChild(inputContent);
-        
-        document.body.appendChild(form);
-        form.submit();
-    }
+    let content = document.querySelector(`#post-${postId} p`).innerText;
+    openEditModal(postId, content);
+}
+
+function openEditModal(postId, content) {
+    document.getElementById("edit_post_id").value = postId;
+    document.getElementById("edit_content").value = content;
+    document.getElementById("editPostModal").style.display = "block";
+}
+
+function closeEditModal() {
+    document.getElementById("editPostModal").style.display = "none";
 }
 
 function deletePost(postId) {
@@ -411,6 +414,24 @@ function toggleOptionsMenu(postId) {
     } else {
         menu.style.display = "block";
     }
+}
+function openFullScreen(imgElement) {
+    var fullScreenImage = document.createElement("img");
+    fullScreenImage.src = imgElement.src; // Ustawiamy źródło zdjęcia na to, które kliknięto
+    fullScreenImage.style.position = "fixed";
+    fullScreenImage.style.top = "0";
+    fullScreenImage.style.left = "0";
+    fullScreenImage.style.width = "100%";
+    fullScreenImage.style.height = "100%";
+    fullScreenImage.style.objectFit = "contain"; // Aby zachować proporcje
+    fullScreenImage.style.zIndex = "9999"; // Aby obraz był na wierzchu
+    fullScreenImage.style.cursor = "zoom-out"; // Kursor, który sugeruje, że można zamknąć
+    fullScreenImage.onclick = function() {
+        document.body.removeChild(fullScreenImage); // Zamknięcie pełnoekranowego obrazu po kliknięciu
+    };
+
+    // Dodajemy zdjęcie do body, aby wyświetlić je w pełnym ekranie
+    document.body.appendChild(fullScreenImage);
 }
 </script>
 
