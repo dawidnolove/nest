@@ -1,0 +1,367 @@
+/*.post img {
+    max-width: 100%;  /   /* Utrzymamy proporcje obrazu 
+    display: block;   /* Usuwamy odstępy wokół obrazów 
+    margin: 10px 0;   /* Dodajemy marginesy wokół obrazów 
+*/
+  body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0px 3px 10px #000;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background-image: url('logo720.png');
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 20%;
+            max-width: 250px;
+            background-color: #333;
+            padding: 20px;
+            box-shadow: 2px 0px 10px #000;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #444;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .post {
+            background-color: #333;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 3px 10px #000;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .post h3 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .post p {
+            color: #ccc;
+        }
+
+        #icon-github {
+            width: 15px;
+            height: 15px;
+        }
+        .styled-input {
+            background-color: #333; /* Lekko szare tło */
+            border: 1px solid #ccc; /* Szary obramowanie */
+            border-radius: 10px; /* Zaokrąglone rogi */
+            padding: 10px; /* Wewnętrzny odstęp */
+            font-size: 16px; /* Rozmiar czcionki */
+            width: 100%; /* Możesz dostosować szerokość */
+            box-sizing: border-box; /* Uwzględnia padding w szerokości */
+          }
+        
+          .styled-input:focus {
+            outline: none; /* Usuwa domyślny obrys po kliknięciu */
+            border-color: #888; /* Zmienia kolor obramowania przy focusie */
+            background-color: #333; /* Ciemniejsze tło przy focusie */
+          }
+        .timestamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .options {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .options-menu {
+            display: none;
+            background-color: #444;
+            border-radius: 5px;
+            padding: 10px;
+            position: absolute;
+            top: -40px;
+            right: 0;
+            box-shadow: 0px 3px 10px #000;
+        }
+
+        .options-menu button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .options-menu button:hover {
+            background-color: #777;
+        }
+
+        footer {
+            background-color: #333;
+            text-align: center;
+            padding: 10px;
+            color: #aaa;
+            box-shadow: 0px -3px 10px #000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 3px 10px #000;
+            text-align: center;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            background: #222;
+            color: #fff;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .modal input[type="file"] {
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .modal button {
+            padding: 10px;
+            border: none;
+            background: #555;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .modal button:hover {
+            background: #777;
+        }
+
+        .add-post-btn, .search-btn {
+            padding: 10px 15px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto;
+			text-align: center;
+        }
+
+        .add-post-btn:hover, .search-btn:hover {
+            background: #666;
+			text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+            margin-top: 12px;
+			
+        }
+
+       .add-post-btn {
+    padding: 10px 15px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto;
+    text-align: center;
+    width: 200px; /* Określ szerokość przycisku */
+}
+
+@media (max-width: 768px) {
+    .add-post-btn {
+        width: 100%; /* Na mniejszych ekranach przycisk zajmie całą szerokość */
+    }
+}
+ul {
+        list-style-type: decimal; 
+        padding-left: 20px;
+        margin-top: 20px; 
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #fff;
+    }
+.main-content3 {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    display: center;
+    flex-direction: column;
+    justify-content: center;  
+    align-items: center;      
+    text-align: left;
+    min-height: 40vh;
+    width: 93%;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);  
+}
+/* Styl dla info o użytkowniku */
+.user-info {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #333;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-info h2 {
+        margin-bottom: 15px;
+    }
+
+    .user-info p {
+        margin-bottom: 10px;
+    }
+
+    .user-info label {
+        font-weight: bold;
+    }
+
+    .user-info span {
+        color: #aaa;
+    }
+
+    .toggle-password {
+        cursor: pointer;
+        color: #00aaff;
+        text-decoration: underline;
+    }
+	/* Styl sekcji ustawień */
+ .settings-section {
+        margin-top: 20px;
+        background-color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-section h2 {
+        margin-bottom: 15px;
+    }
+
+    .settings-section label {
+        font-weight: bold;
+    }
+
+    .settings-section input, .settings-section select {
+        background-color: #444;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+
+    .settings-section button {
+        background-color: #00aaff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .settings-section button:hover {
+        background-color: #0088cc;
+    }
+    #logout{
+        border: rgba(255,0,0,0.7) 0.5px solid;
+    }
