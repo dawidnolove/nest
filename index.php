@@ -1,8 +1,8 @@
 <?php
 include("db.php");
+session_start();
 
-// Połączenie z bazą danych
-$servername = "localhost";
+$servername = "localhost";// Połączenie z bazą danych
 $username = "root"; // Zmień na swoje dane
 $password = ""; // Zmień na swoje dane
 $dbname = "baza2"; // Zmień na swoją nazwę bazy danych
@@ -12,6 +12,8 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+
 
 // Dodawanie postu
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'add_post') {
@@ -105,6 +107,18 @@ if ($result->num_rows > 0) {
     }
 }
 
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+
+    // Przygotowanie zapytania SQL (ochrona przed SQL Injection)
+    $stmt = $conn->prepare("SELECT email, phone FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id); // "i" oznacza integer (liczba całkowita)
+    $stmt->execute();
+    $stmt->bind_result($localusermail, $localuserphone);
+    $stmt->fetch();
+    $stmt->close();
+}
+
 $conn->close();
 ?>
 
@@ -119,11 +133,12 @@ $conn->close();
   
     </style>
 </head>
+<link href="register.php">
+<link href="login.php">
 <body>
 <header>
     <a class="logo" href="index.php"></a>
 </header>
-
 
 <div class="layout">
     <div class="sidebar">
@@ -267,13 +282,8 @@ $conn->close();
             <div class="main-content">
                 <div class="user-info">
                     <h2>Dane użytkownika</h2>
-                    <p><label>Nazwa Użytkownika:</label> <span>Jan Kowalski </span></p>
-                    <p><label>Imię:</label> <span>Jan </span></p>
-                    <p><label>Nazwisko:</label> <span>Kowalski</span></p>
-                    <p><label>Email:</label> <span>jan.kowalski@przykład.com</span></p>
-                    <p><label>Numer telefonu:</label> <span>+48 123 456 789</span></p>
-                    <p><label>Hasło:</label> <span id="password">********</span> 
-                    <span id="wyświetlhasło" class="toggle-password">Pokaż</span></p>
+                    <p><label>Email:</label> <span><?php echo $localusermail;?></span></p>
+                    <p><label>Numer telefonu:</label> <span><?php echo $localuserphone;?></span></p>
                 </div>
             </div>
         `;
@@ -295,10 +305,8 @@ function loadSettings() {
         <div class="main-content">
             <div class="settings-section">
                 <h2>Ustawienia konta</h2>
-                <label for="username">Nazwa użytkownika:</label>
-                <input type="text" id="username" placeholder="Jan Kowalski">
                 <label for="email">Adres email:</label>
-                <input type="email" id="email" placeholder="jan.kowalski@example.com">
+                <input type="email" id="email" placeholder="Wpisz email">
                 <label for="password">Nowe hasło:</label>
                 <input type="password" id="password" placeholder="Wpisz nowe hasło">
                 <button>Zapisz zmiany</button>
