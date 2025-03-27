@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 
 // Dodawanie postu
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'add_post') {
-    $username = $_POST['username'];
+    $username = $_SESSION['sesyjnymail'];
     $content = $_POST['content'];
     $timestamp = date("Y-m-d H:i:s");
     $file_path = null;
@@ -118,7 +118,7 @@ if (isset($_SESSION['user_id'])) {
     $stmt->fetch();
     $stmt->close();
 }
-
+$_SESSION['sesyjnymail'] = $localusermail;
 $conn->close();
 ?>
 
@@ -262,9 +262,6 @@ $conn->close();
     <h3>Dodaj nowy post</h3>
     <form action="index.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="action" value="add_post">
-        <label for="username">Nazwa użytkownika:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
-
         <label for="content">Treść posta:</label><br>
         <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
 
@@ -275,10 +272,15 @@ $conn->close();
         <button type="button" onclick="closeModal()">Anuluj</button>
     </form>
 </div>
+
+<footer>
+    <p>© 2024 LoreNest. Wszelkie prawa zastrzeżone. All Rights Reserved</p>
+</footer>
+
+<script>
     //                    <p><label>Hasło:</label> <span id="password">********</span> 
     //                    <span id="wyświetlhasło" class="toggle-password">Pokaż</span></p> 
     // Funkcja wyświetlania i ukrywania hasła w poniższej funkcji
-<script>
  function loadProfile() {
         document.querySelector('.main-content').innerHTML = `
             <div class="main-content">
@@ -286,6 +288,7 @@ $conn->close();
                     <h2>Dane użytkownika</h2>
                     <p><label>Email:</label> <span><?php echo $localusermail;?></span></p>
                     <p><label>Numer telefonu:</label> <span><?php echo $localuserphone;?></span></p>
+
                 </div>
             </div>
         `;
