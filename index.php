@@ -275,7 +275,9 @@ $conn->close();
         <button type="button" onclick="closeModal()">Anuluj</button>
     </form>
 </div>
-
+    //                    <p><label>Hasło:</label> <span id="password">********</span> 
+    //                    <span id="wyświetlhasło" class="toggle-password">Pokaż</span></p> 
+    // Funkcja wyświetlania i ukrywania hasła w poniższej funkcji
 <script>
  function loadProfile() {
         document.querySelector('.main-content').innerHTML = `
