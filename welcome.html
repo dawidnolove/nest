@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Witaj w LoreNest</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #003366, #00557f, #006f9e, #0087b3, #00a8c6);
+      background-size: 400% 400%;
+      animation: backgroundAnimation 12s ease infinite;
+    }
+
+    @keyframes backgroundAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .container {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .welcome-text {
+      font-size: 4rem;
+      color: white;
+      margin-bottom: 20px;
+      font-weight: 600;
+      opacity: 0;
+    }
+	
+	.second-text {
+      font-size: 2rem;
+      color: black;
+      margin-bottom: 20px;
+      font-weight: 600;
+      opacity: 0;
+    }
+
+    .login-button {
+      background-color: #333;
+      border: none;
+      color: white;
+      padding: 16px 40px;
+      font-size: 1.3rem;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 3;
+	  font-family: 'Arial', sans-serif;
+    }
+
+    .login-button:hover {
+      background-color: white;
+      color: #333;
+      transform: scale(1.05);
+    }
+
+    .login-button:focus {
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background"></div>
+  <div class="container">
+    <h1 class="welcome-text">Wiedza łączy. Możliwości rosną.<br>LoreNest.</h1>
+	<h2 class="second-text">Już teraz znajdź wymarzonego nauczyciela, lub sam podziel się swoimi umiejętnościami!</h2>
+  </div>
+
+  <!-- Przycisk niezależnie od innych elementów, zawsze w prawym dolnym rogu -->
+  <button class="login-button" onclick="window.location.href='login-form.php'">Get started!</button>
+
+  <script>
+    // Animacja powitalnego napisu
+    gsap.to('.welcome-text', {
+      opacity: 1,
+      duration: 2,
+      delay: 0.1,
+      y: 20
+    });
+	
+	gsap.to('.second-text', {
+      opacity: 1,
+      duration: 2,
+      delay: 0.9,
+      y: 20
+    });
+  </script>
+</body>
+
+</html>
