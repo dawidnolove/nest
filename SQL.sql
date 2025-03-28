@@ -17,4 +17,4 @@ CREATE TABLE posts (
   file_path VARCHAR(255) DEFAULT NULL,
   file_type VARCHAR(50) DEFAULT NULL,
   FOREIGN KEY (username) REFERENCES users(email)  -- Assuming users are identified by email
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+);
