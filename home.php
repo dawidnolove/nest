@@ -2,6 +2,12 @@
 session_start();
 include("db.php");
 
+if (!isset($_SESSION['email'])) {
+    $_SESSION['message'] = "Proszę się zalogować, aby uzyskać dostęp do strony.";
+    header("Location: login-form.php");
+    exit();
+}
+
 header('Content-Type: text/html; charset=utf-8');
 
 if (isset($_SESSION['email'])) {
