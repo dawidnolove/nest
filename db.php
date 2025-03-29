@@ -1,8 +1,10 @@
 <?php
-$host = 'sql101.infinityfree.com';      
-$dbname = 'if0_38422307_lore_nest';  
-$uname = 'if0_38422307';      
-$passwd= 'ad17dp07';
+$host = '127.0.0.1';      
+$dbname = 'baza2';  
+$uname = 'root';      
+$passwd= ''; 
+
+
 
 $dsn = "mysql:host=$host;dbname=$dbname";
 
@@ -19,10 +21,3 @@ try {
 } catch (PDOException $e) {
     die("Błąd połączenia: " . $e->getMessage());
 }
-
-/*
-$host = '127.0.0.1';      
-$dbname = 'baza2';  
-$uname = 'root';      
-$passwd= '';   
-*/
