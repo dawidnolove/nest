@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Witaj w LoreNest</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00c9b7;
+      --secondary: #0066cc;
+      --dark: #0a192f;
+      --light: #e6f1ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      color: var(--light);
+      background-color: var(--dark);
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .main-title {
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      font-weight: 900;
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      margin-bottom: 2rem;
+      max-width: 800px;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 45px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0, 201, 183, 0.3);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 201, 183, 0.4);
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--secondary), var(--primary));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .cta-button:hover::before {
+      opacity: 1;
+    }
+
+    .floating-icons {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-icon {
+      position: absolute;
+      opacity: 0.1;
+      font-size: 24px;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+      }
+    }
+
+    .features {
+      padding: 100px 20px;
+      background-color: rgba(10, 25, 47, 0.8);
+      position: relative;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 40px 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .feature-desc {
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+    }
+
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 3rem;
+      }
+      
+      .subtitle {
+        font-size: 1.2rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Canvas for Three.js background -->
+  <canvas id="canvas"></canvas>
+  
+  <!-- Floating icons -->
+  <div class="floating-icons">
+    <div class="floating-icon" style="left: 10%; top: 20%; animation-delay: 0s;">📚</div>
+    <div class="floating-icon" style="left: 25%; top: 50%; animation-delay: 2s;">🎓</div>
+    <div class="floating-icon" style="left: 75%; top: 30%; animation-delay: 4s;">🧠</div>
+    <div class="floating-icon" style="left: 50%; top: 80%; animation-delay: 6s;">🔍</div>
+    <div class="floating-icon" style="left: 90%; top: 60%; animation-delay: 8s;">💡</div>
+    <div class="floating-icon" style="left: 30%; top: 10%; animation-delay: 10s;">🌐</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="main-title">Wiedza łączy.<br>Możliwości rosną.</h1>
+      <h2 class="subtitle">Znajdź idealnego nauczyciela, podziel się umiejętnościami lub nawiąż wartościowe znajomości w społeczności LoreNest.</h2>
+      <button class="cta-button" onclick="animateOut()">Dołącz do nas!</button>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">Znajdź mentora</h3>
+        <p class="feature-desc">Połącz się z ekspertami w dziedzinach, które Cię interesują. Ucz się od najlepszych w przyjaznej atmosferze.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤝</div>
+        <h3 class="feature-title">Dziel się wiedzą</h3>
+        <p class="feature-desc">Zostań nauczycielem i pomóż innym w rozwoju. Buduj swoją reputację jako ekspert w swojej dziedzinie.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌱</div>
+        <h3 class="feature-title">Rozwijaj się</h3>
+        <p class="feature-desc">Odkrywaj nowe umiejętności i poszerzaj horyzonty dzięki naszej różnorodnej społeczności uczących się.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Three.js background animation
+    const canvas = document.getElementById('canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = 1000;
+    
+    const posArray = new Float32Array(particleCount * 3);
+    
+    for(let i = 0; i < particleCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 10;
+    }
+    
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.02,
+      color: 0x00c9b7,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      
+      particlesMesh.rotation.x += 0.0005;
+      particlesMesh.rotation.y += 0.0005;
+      
+      renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // GSAP animations
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Hero section animations
+    gsap.to('.main-title', {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: 'power3.out',
+      delay: 0.3
+    });
+    
+    gsap.to('.subtitle', {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: 'power3.out',
+      delay: 0.6
+    });
+    
+    gsap.to('.cta-button', {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: 'power3.out',
+      delay: 0.9
+    });
+    
+    gsap.utils.toArray('.feature-card').forEach((card, i) => {
+      gsap.fromTo(card, 
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.features',
+            start: 'top 70%',
+            toggleActions: 'play none none none',
+            delay: i * 0.2
+          }
+        }
+      );
+    });
+    
+    document.querySelector('.cta-button').addEventListener('mouseenter', () => {
+      gsap.to('.cta-button', {
+        scale: 1.05,
+        duration: 0.3
+      });
+    });
+    
+    document.querySelector('.cta-button').addEventListener('mouseleave', () => {
+      gsap.to('.cta-button', {
+        scale: 1,
+        duration: 0.3
+      });
+    });
+    
+    // Window resize handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // Page transition
+    function animateOut() {
+      gsap.to('body', {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.in',
+        onComplete: () => {
+          window.location.href = 'login-form.php';
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
