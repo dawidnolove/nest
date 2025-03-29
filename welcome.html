@@ -102,7 +102,7 @@
   </div>
 
   <!-- Przycisk niezależnie od innych elementów, zawsze w prawym dolnym rogu -->
- <button class="login-button" onclick="window.location.href='login-form.php'">Get started!</button>
+ <button class="login-button" onclick="window.location.href='login-form.html'">Get started!</button>
 
 
   <script>
@@ -122,7 +122,7 @@
     });
 	 document.querySelector('.login-button').addEventListener('click', function () {
     gsap.to('body', { opacity: 0, duration: 0.5, onComplete: function () {
-      window.location.href = 'login-form.php';
+      window.location.href = 'login-form.html';
     }});
   });
   </script>
