@@ -218,7 +218,16 @@ h1, h2, h3 {
     box-shadow: var(--shadow);
     transition: var(--transition);
     border-left: 4px solid var(--primary-color);
-  }
+    overflow: hidden; /* Zapewnia, że nadmiarowy tekst zostanie ukryty, jeśli jest za długi */
+}
+
+.post p {
+    word-wrap: break-word; /* Umożliwia łamanie długich słów */
+    white-space: pre-wrap; /* Pozwala na zachowanie łamania linii w tekście */
+    max-height: 400px; /* Określa maksymalną wysokość kontenera na tekst */
+    overflow-y: auto; /* Pojawi się pasek przewijania, gdy tekst przekroczy max-height */
+}
+
   
   .post:hover {
     transform: translateY(-3px);
@@ -1071,4 +1080,33 @@ border: rgba(255,0,0,0.7) 0.5px solid;
         justify-content: center;
     }
 
+}
+.user-subject {
+    color: #fff; /* Biały tekst dla przedmiotu */
+    padding: 2px 8px;
+    border-radius: 5px;
+}
+#subject {
+    color: #fff;                
+    border: 1px solid #555;      
+    padding: 8px;
+    border-radius: 5px;
+    width: 100%;                 
+    margin-top: 10px;
+    font-size: 1rem;
+    z-index: 10;
+}
+
+#subject option {
+    background-color: #333;
+    color: #fff;
+}
+.username-link {
+    color: white; 
+    text-decoration: none; 
+}
+
+.username-link:hover {
+    text-decoration: underline; 
+    color: white; 
 }
