@@ -11,19 +11,37 @@ if (!isset($_SESSION['email'])) {
 header('Content-Type: text/html; charset=utf-8');
 
 if (isset($_SESSION['email'])) {
-  $localuseremail = $_SESSION['email'];
-  $localuserphone = $_SESSION['phone'];
-  echo "<script>console.log('Zalogowany użytkownik: " . $localuseremail . "');</script>";
+    $localuseremail = $_SESSION['email'];
+    
+    $stmt = $pdo->prepare("SELECT phone FROM admins WHERE email = :email LIMIT 1");
+    $stmt->execute([':email' => $localuseremail]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        $stmt = $pdo->prepare("SELECT phone FROM users WHERE email = :email LIMIT 1");
+        $stmt->execute([':email' => $localuseremail]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    if ($user) {
+        $_SESSION['phone'] = $user['phone'];
+        $localuserphone = $_SESSION['phone']; 
+    } else {
+        $_SESSION['message'] = "Nie znaleziono numeru telefonu dla tego użytkownika.";
+        header("Location: login-form.php");
+        exit();
+    }
 } else {
-  echo "<script>console.log('Brak zalogowanego użytkownika.');</script>";
+    echo "<script>console.log('Brak zalogowanego użytkownika.');</script>";
 }
+
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 function sanitizeInput($data) {
     return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
 }
 
-// dodawanie posta
+// Dodawanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'add_post') {
     try {
         $username = sanitizeInput($_POST['username']);
@@ -83,13 +101,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 throw new Exception("Wystąpił błąd przy przesyłaniu pliku");
             }
         }
-
-        // Sprawdzanie wymaganych pól
         if (empty($username) || empty($content) || empty($subject)) {
             throw new Exception("Wypełnij wszystkie wymagane pola, w tym wybierz przedmiot.");
         }
-
-        // Wstawienie danych do bazy danych
         $stmt = $pdo->prepare("INSERT INTO posts (username, content, timestamp, file_path, file_type, subject) 
                               VALUES (:username, :content, :timestamp, :file_path, :file_type, :subject)");
         $stmt->execute([
@@ -114,6 +128,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     try {
         $post_id = (int)$_POST['post_id'];
         $new_content = sanitizeInput($_POST['content']);
+        $stmt = $pdo->prepare("SELECT username FROM posts WHERE id = :id");
+        $stmt->execute([':id' => $post_id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$post) {
+            throw new Exception("Post nie istnieje.");
+        }
+        if ($_SESSION['email'] !== $post['username'] && (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true)) {
+            throw new Exception("Brak uprawnień do edycji tego posta.");
+        }
 
         $stmt = $pdo->prepare("UPDATE posts SET content = :content WHERE id = :id");
         $stmt->execute([
@@ -129,24 +153,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-
 // usuwanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'delete_post') {
     try {
         $post_id = (int)$_POST['post_id'];
-        
+
+        $stmt = $pdo->prepare("SELECT username FROM posts WHERE id = :id");
+        $stmt->execute([':id' => $post_id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$post) {
+            throw new Exception("Post nie istnieje.");
+        }
+        if ($_SESSION['email'] !== $post['username'] && (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true)) {
+            throw new Exception("Brak uprawnień do usunięcia tego posta.");
+        }
+
         $stmt = $pdo->prepare("DELETE FROM posts WHERE id = :id");
         $stmt->execute([':id' => $post_id]);
 
         $_SESSION['message'] = "Post został usunięty";
-        header("Location: " . strtok($_SERVER['REQUEST_URI'], '?')); 
+        header("Location: " . strtok($_SERVER['REQUEST_URI'], '?'));
         exit();
 
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
 }
-
 // wyszukiwanie
 $search_query = '';
 $posts = [];
@@ -178,7 +211,9 @@ if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
     unset($_SESSION['message']);
 }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -393,18 +428,18 @@ if (isset($_SESSION['message'])) {
                     </a>
                 <?php endif; ?>
             <?php endif; ?>
-            <div class="post-footer">
-                <span class="timestamp"><?= htmlspecialchars($post['timestamp']) ?></span>
-                <div class="post-actions">
-              <?php if (
-    isset($_SESSION['email']) &&
-    ($_SESSION['email'] === $post['username'] || (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true))
-): ?>
-    <button onclick="editPost(<?= $post['id'] ?>)">Edytuj</button>
-    <button onclick="confirmDelete(<?= $post['id'] ?>)">Usuń</button>
-<?php endif; ?>
-                </div>
-            </div>
+     <div class="post-footer">
+    <span class="timestamp"><?= htmlspecialchars($post['timestamp']) ?></span>
+    <div class="post-actions">
+        <?php if (
+            isset($_SESSION['email']) &&
+            ($_SESSION['email'] === $post['username'] || (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true))
+        ): ?>
+            <button onclick="editPost(<?= $post['id'] ?>)">Edytuj</button>
+            <button onclick="confirmDelete(<?= $post['id'] ?>)">Usuń</button>
+        <?php endif; ?>
+    </div>
+</div>
         </div> 
         <?php endforeach; ?>
     <?php else: ?>
@@ -561,7 +596,7 @@ function loadProfile() {
         <div class="user-info">
             <h2>Twoje Dane</h2>
             <p><label>Email:</label> <span><?php echo $localuseremail; ?></span></p>
-            <p><label>Numer telefonu:</label> <span><?php echo $localuserphone; ?></span></p>
+           <p><label>Numer telefonu:</label> <span><?php echo $localuserphone; ?></span></p>
         </div>
         <div class="back-button" onclick="loadPosts()"></div>`;
 }
@@ -759,4 +794,3 @@ window.onclick = function(event) {
 </script>
 </body>
 </html>
-
