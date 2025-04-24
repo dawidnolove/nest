@@ -13,6 +13,7 @@ session_start();
     <meta name="description" content="Web site created by LoreNest team using React but it was quite hard, so we passed">
     <link rel="stylesheet" href="login-form.css">
     <title>Nest for Lore</title>
+    <link rel="icon" href="logo720.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
