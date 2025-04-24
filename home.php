@@ -220,6 +220,7 @@ if (isset($_SESSION['message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona Główna - Posty</title>
+    <link rel="icon" href="logo720.png" type="image/x-icon">
     <link rel="stylesheet" href="home.css?v=<?= time() ?>">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
