@@ -384,6 +384,9 @@ if (isset($_SESSION['message'])) {
     <div class="sidebar left-sidebar">
         <a href="javascript:void(0);" onclick="loadProfile()">Profil</a>
         <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
+		  <a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
+        <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
+        <p><a href="https://github.com/dawidnolove/nest" target="blank">Github <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"></a></p>
         <p><a id="logout" href="logout.php">Wyloguj</a></p>
         <h1>&copy;</h1>
     </div>
@@ -446,12 +449,6 @@ if (isset($_SESSION['message'])) {
         <p class="no-posts">Brak postów do wyświetlenia.</p>
     <?php endif; ?>
 </div>
-    
-    <div class="sidebar right-sidebar">
-        <a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
-        <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
-        <p><a href="https://github.com/dawidnolove/nest" target="blank">Github <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"></a></p>
-        <h1>&reg;</h1>
     </div>
 </div>
 
