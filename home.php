@@ -132,88 +132,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-// Edytowanie posta
+// edytowanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_post') {
     try {
         $post_id = (int)$_POST['post_id'];
         $new_content = sanitizeInput($_POST['content']);
-        $stmt = $pdo->prepare("SELECT username, file_path FROM posts WHERE id = :id");
+        $stmt = $pdo->prepare("SELECT username FROM posts WHERE id = :id");
         $stmt->execute([':id' => $post_id]);
         $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$post) {
             throw new Exception("Post nie istnieje.");
         }
-
         if ($_SESSION['email'] !== $post['username'] && (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true)) {
             throw new Exception("Brak uprawnień do edycji tego posta.");
         }
-        $file_path = $post['file_path']; 
-        $file_type = null;
-        if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
-            if ($file_path && file_exists($file_path)) {
-                unlink($file_path);
-            }
-            $file_tmp = $_FILES['attachment']['tmp_name'];
-            $file_name = sanitizeInput($_FILES['attachment']['name']);
-            $file_size = $_FILES['attachment']['size'];
-            $file_type = $_FILES['attachment']['type'];
 
-            if (!is_uploaded_file($_FILES['attachment']['tmp_name'])) {
-                throw new Exception("Nieprawidłowe przesyłanie pliku");
-            }
-
-            // Definicja dozwolonych typów MIME
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'application/msword', 
-                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                            'application/pdf', 'application/vnd.ms-excel', 
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-                            'text/plain'];
-
-            $max_size = 5 * 1024 * 1024;
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime_type = finfo_file($finfo, $file_tmp);
-            finfo_close($finfo);
-
-            // Dozwolone rozszerzenia plików
-            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'txt'];
-            $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-
-            if (!in_array($file_extension, $allowed_extensions)) {
-                throw new Exception("Nieprawidłowe rozszerzenie pliku");
-            }
-
-            if (!in_array($mime_type, $allowed_types)) {
-                throw new Exception("Nieprawidłowy typ pliku. Dozwolone formaty graficzne i tekstowe");
-            }
-
-            if ($file_size > $max_size) {
-                throw new Exception("Plik jest zbyt duży (max 5MB)");
-            }
-
-            $upload_dir = "uploads/";
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0755, true);
-            }
-            $new_file_name = $file_name;
-            $file_path = $upload_dir . $new_file_name;
-            $counter = 1;
-            while (file_exists($file_path)) {
-                $new_file_name = pathinfo($file_name, PATHINFO_FILENAME) . "($counter)." . $file_extension;
-                $file_path = $upload_dir . $new_file_name;
-                $counter++;
-            }
-            if (!move_uploaded_file($file_tmp, $file_path)) {
-                throw new Exception("Wystąpił błąd przy przesyłaniu pliku");
-            }
-        } else {
-            $file_path = $post['file_path'];
-        }
-        $stmt = $pdo->prepare("UPDATE posts SET content = :content, file_path = :file_path, file_type = :file_type WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE posts SET content = :content WHERE id = :id");
         $stmt->execute([
             ':content' => $new_content,
-            ':file_path' => $file_path,
-            ':file_type' => $file_type,
             ':id' => $post_id
         ]);
 
@@ -225,7 +162,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-
 // usuwanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'delete_post') {
     try {
