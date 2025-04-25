@@ -1,13 +1,19 @@
 <?php
 session_start();
 include("db.php");
-
 if (!isset($_SESSION['email'])) {
     $_SESSION['message'] = "Proszę się zalogować, aby uzyskać dostęp do strony.";
     header("Location: login-form.php");
     exit();
 }
+// Pobranie zabronionych słów z pliku
+$banned_words_file = 'zakazane.txt';
+$banned_words = file_exists($banned_words_file) ? file($banned_words_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
 
+// Przekazanie zabronionych słów do JavaScript
+echo '<script>';
+echo 'const bannedWords = ' . json_encode($banned_words) . ';';
+echo '</script>';
 header('Content-Type: text/html; charset=utf-8');
 
 if (isset($_SESSION['email'])) {
@@ -16,7 +22,6 @@ if (isset($_SESSION['email'])) {
     $stmt = $pdo->prepare("SELECT phone FROM admins WHERE email = :email LIMIT 1");
     $stmt->execute([':email' => $localuseremail]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if (!$user) {
         $stmt = $pdo->prepare("SELECT phone FROM users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $localuseremail]);
@@ -50,7 +55,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $timestamp = date("Y-m-d H:i:s");
         $file_path = null;
         $file_type = null;
-
+		   foreach ($banned_words as $word) {
+            if (stripos($content, $word) !== false) {
+                throw new Exception(" ⛔ Treść zawiera zabronione słowo: '$word'.");
+            }
+        }
         // Dodawanie pliku
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
             $file_tmp = $_FILES['attachment']['tmp_name'];
@@ -115,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             ':subject' => $subject
         ]);
 
-        $_SESSION['message'] = "Post został dodany pomyślnie";
+        $_SESSION['message'] = " ✅  Post został dodany pomyślnie";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
 
@@ -123,25 +132,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-// edytowanie posta
+// Edytowanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_post') {
     try {
         $post_id = (int)$_POST['post_id'];
         $new_content = sanitizeInput($_POST['content']);
-        $stmt = $pdo->prepare("SELECT username FROM posts WHERE id = :id");
+        $stmt = $pdo->prepare("SELECT username, file_path FROM posts WHERE id = :id");
         $stmt->execute([':id' => $post_id]);
         $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$post) {
             throw new Exception("Post nie istnieje.");
         }
+
         if ($_SESSION['email'] !== $post['username'] && (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true)) {
             throw new Exception("Brak uprawnień do edycji tego posta.");
         }
+        $file_path = $post['file_path']; 
+        $file_type = null;
+        if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
+            if ($file_path && file_exists($file_path)) {
+                unlink($file_path);
+            }
+            $file_tmp = $_FILES['attachment']['tmp_name'];
+            $file_name = sanitizeInput($_FILES['attachment']['name']);
+            $file_size = $_FILES['attachment']['size'];
+            $file_type = $_FILES['attachment']['type'];
 
-        $stmt = $pdo->prepare("UPDATE posts SET content = :content WHERE id = :id");
+            if (!is_uploaded_file($_FILES['attachment']['tmp_name'])) {
+                throw new Exception("Nieprawidłowe przesyłanie pliku");
+            }
+
+            // Definicja dozwolonych typów MIME
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'application/msword', 
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                            'application/pdf', 'application/vnd.ms-excel', 
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+                            'text/plain'];
+
+            $max_size = 5 * 1024 * 1024;
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $file_tmp);
+            finfo_close($finfo);
+
+            // Dozwolone rozszerzenia plików
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'txt'];
+            $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+            if (!in_array($file_extension, $allowed_extensions)) {
+                throw new Exception("Nieprawidłowe rozszerzenie pliku");
+            }
+
+            if (!in_array($mime_type, $allowed_types)) {
+                throw new Exception("Nieprawidłowy typ pliku. Dozwolone formaty graficzne i tekstowe");
+            }
+
+            if ($file_size > $max_size) {
+                throw new Exception("Plik jest zbyt duży (max 5MB)");
+            }
+
+            $upload_dir = "uploads/";
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            $new_file_name = $file_name;
+            $file_path = $upload_dir . $new_file_name;
+            $counter = 1;
+            while (file_exists($file_path)) {
+                $new_file_name = pathinfo($file_name, PATHINFO_FILENAME) . "($counter)." . $file_extension;
+                $file_path = $upload_dir . $new_file_name;
+                $counter++;
+            }
+            if (!move_uploaded_file($file_tmp, $file_path)) {
+                throw new Exception("Wystąpił błąd przy przesyłaniu pliku");
+            }
+        } else {
+            $file_path = $post['file_path'];
+        }
+        $stmt = $pdo->prepare("UPDATE posts SET content = :content, file_path = :file_path, file_type = :file_type WHERE id = :id");
         $stmt->execute([
             ':content' => $new_content,
+            ':file_path' => $file_path,
+            ':file_type' => $file_type,
             ':id' => $post_id
         ]);
 
@@ -153,6 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
+
 // usuwanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'delete_post') {
     try {
@@ -220,7 +293,7 @@ if (isset($_SESSION['message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona Główna - Posty</title>
-    <link rel="icon" href="logo720.png" type="image/x-icon">
+	<link rel="icon" href="logo720.png" type="image/x-icon">
     <link rel="stylesheet" href="home.css?v=<?= time() ?>">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
@@ -259,8 +332,10 @@ if (isset($_SESSION['message'])) {
     <form action="home.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="action" value="add_post">
         <input type="hidden" name="username" value="<?= isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : '' ?>">
+        
         <label for="content">Treść posta:</label><br>
         <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
+
         <label for="attachment" id="attach-label" style="cursor: pointer;">Załącz plik:</label>
         <input type="file" id="attachment" name="attachment" style="display: none;">
         <div id="file-info" class="file-info" style="display: none;">
@@ -788,7 +863,30 @@ window.onclick = function(event) {
     if (!event.target.matches('.dropdown-response > a')) {
         document.getElementById("dropdownMenu").classList.remove("show");
     }
+};
+function checkBannedWords(content) {
+    for (let i = 0; i < bannedWords.length; i++) {
+        if (content.toLowerCase().includes(bannedWords[i].toLowerCase())) {
+            return bannedWords[i];
+        }
+    }
+    return null;
 }
+// Event listener dla pola "content"
+document.getElementById('content').addEventListener('input', function() {
+    const content = this.value;
+    const bannedWord = checkBannedWords(content);
+
+    const messageElement = document.getElementById('banned-word-message');
+    if (bannedWord) {
+        messageElement.style.display = 'block';
+        messageElement.innerHTML = `⛔ Treść zawiera zabronione słowo: '${bannedWord}'`;
+    } else {
+        messageElement.style.display = 'none';
+    }
+});
 </script>
+
 </body>
 </html>
+
