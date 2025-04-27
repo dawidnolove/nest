@@ -229,7 +229,7 @@ if (isset($_SESSION['message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona Główna - Posty</title>
-	<link rel="icon" href="logo720.png" type="image/x-icon">
+	<link rel="icon" href="logo720.webp" type="image/x-icon">
     <link rel="stylesheet" href="home.css?v=<?= time() ?>">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
@@ -383,6 +383,7 @@ if (isset($_SESSION['message'])) {
             <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
             <a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
             <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
+            <a href="javascript:void(0);" onclick="loadFAQ()">FAQ</a>
             <a href="https://github.com/dawidnolove/nest" target="blank">Github 
                 <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Github_logo_svg.svg/640px-Github_logo_svg.svg.png" width="16px">
             </a>
@@ -396,8 +397,9 @@ if (isset($_SESSION['message'])) {
     <div class="sidebar left-sidebar">
         <a href="javascript:void(0);" onclick="loadProfile()">Profil</a>
         <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
-		  <a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
+		<a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
         <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
+        <a href="javascript:void(0);" onclick="loadFAQ()">FAQ</a>
         <p><a href="https://github.com/dawidnolove/nest" target="blank">Github <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"></a></p>
         <p><a id="logout" href="logout.php">Wyloguj</a></p>
         <h1>&copy;</h1>
@@ -637,6 +639,30 @@ function loadHelp() {
         <div class="back-button" onclick="loadPosts()"></div>`;
 }
 
+function loadFAQ() {
+    document.querySelector('.main-content').innerHTML = `
+        <h1>FAQ</h1>
+        <h2>Często zadawane pytania:</h2>
+        <p style="text-weight: bold;">Czym jest LoreNest?</p>
+        <p>LoreNest jest to aplikacja ułatwiająca użytkownikom w całej polsce znajdowanie korepetytorów/nauczycieli prywatnych, którzy mogą pomóc w nauce.</p>
+        <br><br>
+        <p style="text-weight: bold;">Ile kosztuje członkowstwo?</p>
+        <p>Członkowstwo jest bezpłatne, jedynymi opłatami jakie może ponieść użytkownik to opłaty za lekcje prowadzone przez nauczycieli pochodzących z naszej platformy</p>
+        <br><br>
+        <p style="text-weight: bold;">Jak mogę skontaktować się z osobą świadczącą pomoc?</p>
+        <p>Aby skontaktować się z osobą świadczącą pomoc, wystarczy że skopiujesz mail podany w nagłówku wiadomości, a następnie napiszesz do niej maila</p>
+        <br><br>
+        <p style="text-weight: bold;">Kto może ogłaszać się jako nauczyciel?</p>
+        <p>Jako nauczyciel może ogłaszać się każda osoba, która ma zakres wiedzy w temacie na który jest zapotrzebowanie, lecz jeśli osoba, która świadczy usługi nie wykazuje się taką wiedzą i zostanie zgłoszona, jej konto może zostać permanentnie zbanowane</p>
+        <br><br>
+        <p style="text-weight: bold;">Straciłem hasło, jak mogę je zresetować?</p>
+        <p>Aby zresetować hasło przejdź do zakładki ustawienia i tam w odpowiednim polu wpisz nowe hasło</p>
+        <br><br>
+        <p style="text-weight: bold">Straciłem dostęp do konta, czy mogę je odzyskać></p>
+        <p>Nie ma możliwości odzyskania dostępu do utraconego konta, w takim przypadku prosimy wysłać prośbę o usunięcie go na maila supportu, a następnie po +- dobie utworzenie nowego konta</p>
+        <div class="back-button" onclick="loadPosts()"></div>`;
+}
+
 function loadRules() {
     document.querySelector('.main-content').innerHTML = `
         <h1>Regulamin</h1>
@@ -654,9 +680,6 @@ function loadPosts() {
     window.location.href = 'home.php';
 }
 
-function toggleDropdown() {
-    document.getElementById("dropdownMenu").classList.toggle("show");
-}
 
 function clearSearch() {
     document.getElementById("search-input").value = "";
