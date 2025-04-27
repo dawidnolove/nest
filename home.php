@@ -7,9 +7,29 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 // Pobranie zabronionych słów z pliku
-$banned_words_file = 'zakazane.txt';
-$banned_words = file_exists($banned_words_file) ? file($banned_words_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+//$banned_words_file = 'zakazane.txt';
+//$banned_words = file_exists($banned_words_file) ? file($banned_words_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+$banned_words_url = 'https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/pl';
 
+// Pobierz zawartość pliku
+$banned_words_content = file_get_contents($banned_words_url);
+
+// Jeśli plik został pobrany poprawnie, przetwórz jego zawartość
+if ($banned_words_content !== false) {
+    // Podziel zawartość na linie
+    $banned_words = explode("\n", $banned_words_content);
+    
+    // Usuń puste linie
+    $banned_words = array_filter($banned_words, function($word) {
+        return !empty(trim($word));
+    });
+    
+    // Zresetuj klucze tablicy
+    $banned_words = array_values($banned_words);
+} else {
+    // Jeśli nie udało się pobrać pliku, ustaw pustą tablicę
+    $banned_words = [];
+}
 // Przekazanie zabronionych słów do JavaScript
 echo '<script>';
 echo 'const bannedWords = ' . json_encode($banned_words) . ';';
@@ -252,7 +272,7 @@ if (isset($_SESSION['message'])) {
         <input type="hidden" id="edit_post_id" name="post_id">
         <label for="edit_content">Treść posta:</label><br>
         <textarea id="edit_content" name="content" rows="4" cols="50" required></textarea><br><br>
-        <label for="edit_attachment" id="edit-attach-label" style="cursor: pointer;">Załącz plik:</label>
+        <label for="edit_attachment" id="edit-attach-label" style="cursor: pointer;">Załącz plik: (klik)</label>
         <input type="file" id="edit_attachment" name="attachment" style="display: none;">
         <div id="edit-file-info" class="file-info" style="display: none;">
             <span id="edit-file-name" class="file-name"></span>
@@ -272,103 +292,16 @@ if (isset($_SESSION['message'])) {
         <label for="content">Treść posta:</label><br>
         <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
 
-        <label for="attachment" id="attach-label" style="cursor: pointer;">Załącz plik:</label>
+        <label for="attachment" id="attach-label" style="cursor: pointer;">Załącz plik: (klik)</label>
         <input type="file" id="attachment" name="attachment" style="display: none;">
         <div id="file-info" class="file-info" style="display: none;">
             <span id="file-name" class="file-name"></span>
             <span id="remove-file" class="remove-file" title="Usuń plik">&times;</span>
         </div>
-<select id="subject" name="subject" required>
-    <option value="" disabled selected>Wybierz przedmiot</option>
-    <option value="Język polski">Język polski</option>
-    <option value="Język angielski">Język angielski</option>
-    <option value="Język niemiecki">Język niemiecki</option>
-    <option value="Język francuski">Język francuski</option>
-    <option value="Język hiszpański">Język hiszpański</option>
-    <option value="Język rosyjski">Język rosyjski</option>
-    <option value="Język włoski">Język włoski</option>
-    <option value="Matematyka">Matematyka</option>
-    <option value="Matematyka rozszerzona">Matematyka rozszerzona</option>
-    <option value="Fizyka">Fizyka</option>
-    <option value="Fizyka rozszerzona">Fizyka rozszerzona</option>
-    <option value="Chemia">Chemia</option>
-    <option value="Chemia rozszerzona">Chemia rozszerzona</option>
-    <option value="Biologia">Biologia</option>
-    <option value="Biologia rozszerzona">Biologia rozszerzona</option>
-    <option value="Geografia">Geografia</option>
-    <option value="Geografia rozszerzona">Geografia rozszerzona</option>
-    <option value="Historia">Historia</option>
-    <option value="Historia rozszerzona">Historia rozszerzona</option>
-    <option value="Wiedza o społeczeństwie">Wiedza o społeczeństwie</option>
-    <option value="Edukacja dla bezpieczeństwa">Edukacja dla bezpieczeństwa</option>
-    <option value="Informatyka">Informatyka</option>
-    <option value="Religia">Religia</option>
-    <option value="Etika">Etika</option>
-    <option value="Wychowanie fizyczne">Wychowanie fizyczne</option>
-    <option value="Plastyka">Plastyka</option>
-    <option value="Muzyka">Muzyka</option>
-    <option value="Podstawy przedsiębiorczości">Podstawy przedsiębiorczości</option>
-    <option value="Biznes i zarządzanie">Biznes i zarządzanie</option>
-    <option value="Filozofia">Filozofia</option>
-    <option value="Psychologia">Psychologia</option>
-    <option value="Logika">Logika</option>
-    <option value="Przyroda">Przyroda</option>
-    <option value="Technika">Technika</option>
-    <option value="Zajęcia z wychowawcą">Zajęcia z wychowawcą</option>
-    <option value="Zajęcia praktyczne">Zajęcia praktyczne</option>
-    <option value="Przedmioty zawodowe">Przedmioty zawodowe</option>
-    <option value="Podstawy prawa">Podstawy prawa</option>
-    <option value="Zajęcia artystyczne">Zajęcia artystyczne</option>
-    <option value="Podstawy grafiki komputerowej">Podstawy grafiki komputerowej</option>
-    <option value="Techniki multimedialne">Techniki multimedialne</option>
-    <option value="Przedsiębiorczość">Przedsiębiorczość</option>
-    <option value="Edukacja regionalna">Edukacja regionalna</option>
-    <option value="Wiedza o kulturze">Wiedza o kulturze</option>
-    <option value="Zajęcia z przedsiębiorczości">Zajęcia z przedsiębiorczości</option>
-    <option value="Zajęcia z informatyki">Zajęcia z informatyki</option>
-    <option value="Ekonomia">Ekonomia</option>
-    <option value="Zajęcia praktyczne zawodowe">Zajęcia praktyczne zawodowe</option>
-    <option value="Elektronika">Elektronika</option>
-    <option value="Mechanika">Mechanika</option>
-    <option value="Automatyka">Automatyka</option>
-    <option value="Inżynieria materiałowa">Inżynieria materiałowa</option>
-    <option value="Technologia chemiczna">Technologia chemiczna</option>
-    <option value="Gastronomia">Gastronomia</option>
-    <option value="Hotelarstwo">Hotelarstwo</option>
-    <option value="Turystyka">Turystyka</option>
-    <option value="Logistyka">Logistyka</option>
-    <option value="Rolnictwo">Rolnictwo</option>
-    <option value="Transport">Transport</option>
-    <option value="Mechatronika">Mechatronika</option>
-    <option value="Programowanie">Programowanie</option>
-    <option value="Administracja">Administracja</option>
-    <option value="Opieka nad dziećmi">Opieka nad dziećmi</option>
-    <option value="Opieka zdrowotna">Opieka zdrowotna</option>
-    <option value="Prace biurowe">Prace biurowe</option>
-    <option value="Fryzjerstwo">Fryzjerstwo</option>
-    <option value="Kucharstwo">Kucharstwo</option>
-    <option value="Kosmetologia">Kosmetologia</option>
-    <option value="Pielęgniarstwo">Pielęgniarstwo</option>
-    <option value="Technologia drewna">Technologia drewna</option>
-    <option value="Spawalnictwo">Spawalnictwo</option>
-    <option value="Stolarstwo">Stolarstwo</option>
-    <option value="Krawiectwo">Krawiectwo</option>
-    <option value="Florystyka">Florystyka</option>
-    <option value="Technik rolnik">Technik rolnik</option>
-    <option value="Technik weterynarii">Technik weterynarii</option>
-    <option value="Technik budownictwa">Technik budownictwa</option>
-    <option value="Technik architektury krajobrazu">Technik architektury krajobrazu</option>
-    <option value="Technik elektryk">Technik elektryk</option>
-    <option value="Technik informatyk">Technik informatyk</option>
-    <option value="Technik logistyk">Technik logistyk</option>
-    <option value="Technik mechanik">Technik mechanik</option>
-    <option value="Technik teleinformatyk">Technik teleinformatyk</option>
-    <option value="Technik transportu drogowego">Technik transportu drogowego</option>
-    <option value="Technik ochrony środowiska">Technik ochrony środowiska</option>
-    <option value="Technik geodeta">Technik geodeta</option>
-    <option value="Technik rachunkowości">Technik rachunkowości</option>
-    <option value="Technik reklamy">Technik reklamy</option>
-</select><br><br>
+        <label for="subject">Przedmiot:</label>
+<input type="text" id="subject" name="subject" autocomplete="off" placeholder="Wpisz przedmiot którego dotyczy post" required>
+<div id="suggestions" style="display: none; border: 1px solid #ccc; max-height: 150px; overflow-y: auto;"></div>
+
         <button type="submit" class="add-post-btn">Wyślij</button>
         <button type="button" class="add-post-btn" onclick="closeModal()">Anuluj</button>
     </form>
@@ -387,8 +320,9 @@ if (isset($_SESSION['message'])) {
             <a href="https://github.com/dawidnolove/nest" target="blank">Github 
                 <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Github_logo_svg.svg/640px-Github_logo_svg.svg.png" width="16px">
             </a>
-            <h1>&reg;&copy;</h1>
             <p><a id="logout" href="logout.php">Wyloguj</a></p>
+            <h1>&reg;&copy;</h1>
+            <a href="javascript:void(0);" onclick="loadChat()" id="chatButton">BETA ML CHAT</a>
         </div>
     </div>
 </header>
@@ -403,6 +337,7 @@ if (isset($_SESSION['message'])) {
         <p><a href="https://github.com/dawidnolove/nest" target="blank">Github <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"></a></p>
         <p><a id="logout" href="logout.php">Wyloguj</a></p>
         <h1>&copy;</h1>
+        <a href="javascript:void(0);" onclick="loadChat()" id="chatButton">BETA ML CHAT</a>
     </div>
     
     <div class="main-content">
@@ -427,7 +362,7 @@ if (isset($_SESSION['message'])) {
                     <?= htmlspecialchars($post['username']) ?>
                 </a>
                 <?php if (!empty($post['subject'])): ?>
-                    <span class="user-subject">[<?= htmlspecialchars($post['subject']) ?>]</span>
+                    <span class="user-subject"><?= htmlspecialchars($post['subject']) ?></span>
                 <?php endif; ?>
             </h3>
             <p><?= nl2br(htmlspecialchars($post['content'])) ?></p>
@@ -467,6 +402,62 @@ if (isset($_SESSION['message'])) {
 </div>
 
 <script>
+    // Lista przedmiotów
+const subjects = [
+    "Język polski", "Język angielski", "Język niemiecki", "Język francuski", "Język hiszpański",
+    "Język rosyjski", "Język włoski", "Matematyka", "Matematyka rozszerzona", "Fizyka", "Fizyka rozszerzona",
+    "Chemia", "Chemia rozszerzona", "Biologia", "Biologia rozszerzona", "Geografia", "Geografia rozszerzona",
+    "Historia", "Historia rozszerzona", "Wiedza o społeczeństwie", "Edukacja dla bezpieczeństwa", "Informatyka",
+    "Religia", "Etika", "Wychowanie fizyczne", "Plastyka", "Muzyka", "Podstawy przedsiębiorczości", "Biznes i zarządzanie",
+    "Filozofia", "Psychologia", "Logika", "Przyroda", "Technika", "Zajęcia z wychowawcą", "Zajęcia praktyczne",
+    "Przedmioty zawodowe", "Podstawy prawa", "Zajęcia artystyczne", "Podstawy grafiki komputerowej", "Techniki multimedialne",
+    "Przedsiębiorczość", "Edukacja regionalna", "Wiedza o kulturze", "Zajęcia z przedsiębiorczości", "Zajęcia z informatyki",
+    "Ekonomia", "Zajęcia praktyczne zawodowe", "Elektronika", "Mechanika", "Automatyka", "Inżynieria materiałowa",
+    "Technologia chemiczna", "Gastronomia", "Hotelarstwo", "Turystyka", "Logistyka", "Rolnictwo", "Transport",
+    "Mechatronika", "Programowanie", "Administracja", "Opieka nad dziećmi", "Opieka zdrowotna", "Prace biurowe",
+    "Fryzjerstwo", "Kucharstwo", "Kosmetologia", "Pielęgniarstwo", "Technologia drewna", "Spawalnictwo", "Stolarstwo",
+    "Krawiectwo", "Florystyka", "Technik rolnik", "Technik weterynarii", "Technik budownictwa", "Technik architektury krajobrazu",
+    "Technik elektryk", "Technik informatyk", "Technik logistyk", "Technik mechanik", "Technik teleinformatyk",
+    "Technik transportu drogowego", "Technik ochrony środowiska", "Technik geodeta", "Technik rachunkowości",
+    "Technik reklamy"
+];
+
+// Funkcja do filtrowania przedmiotów na podstawie wpisywanego tekstu
+function filterSubjects() {
+    const input = document.getElementById("subject").value.toLowerCase();
+    const suggestions = document.getElementById("suggestions");
+    suggestions.innerHTML = ''; // Czyszczenie poprzednich sugestii
+    suggestions.style.display = 'none'; // Ukrycie kontenera z sugestiami
+
+    if (input) {
+        const filteredSubjects = subjects.filter(subject => subject.toLowerCase().includes(input));
+        
+        if (filteredSubjects.length > 0) {
+            suggestions.style.display = 'block'; // Pokaż kontener z sugestiami
+            filteredSubjects.forEach(subject => {
+                const div = document.createElement('div');
+                div.textContent = subject;
+                div.style.padding = '8px';
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', function() {
+                    document.getElementById('subject').value = subject;
+                    suggestions.innerHTML = ''; // Wyczyść sugestie po wyborze
+                    suggestions.style.display = 'none';
+                });
+                suggestions.appendChild(div);
+            });
+        }
+    }
+}
+
+document.getElementById("subject").addEventListener("input", filterSubjects);
+
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('#subject')) {
+        document.getElementById("suggestions").style.display = 'none';
+    }
+});
+
 function setupFileInput(inputId, infoId, nameId, removeId) {
     const fileInput = document.getElementById(inputId);
     const fileInfo = document.getElementById(infoId);
@@ -632,47 +623,251 @@ function loadSettings() {
 
 function loadHelp() {
     document.querySelector('.main-content').innerHTML = `
-        <h1>Pomoc</h1>
-        <h2>Wprowadzenie do platformy</h2>
-        <p>Nasza platforma pozwala uczniom pomagać sobie nawzajem w nauce czy nazwiązywać wartościowe kontakty.</p>
-        <p>Nie pobeiramy opłat za ogloszenia lub członkostwo(narazie).</p>
+        <div id="pomoc-cont">
+            <h1>Pomoc</h1>
+            <h2>Wprowadzenie do platformy</h2>
+            <p>Nasza platforma pozwala uczniom pomagać sobie nawzajem w nauce czy nazwiązywać wartościowe kontakty.</p>
+            <p>Nie pobeiramy opłat za ogloszenia lub członkostwo(narazie).</p>
+        </div>
         <div class="back-button" onclick="loadPosts()"></div>`;
 }
 
 function loadFAQ() {
     document.querySelector('.main-content').innerHTML = `
-        <h1>FAQ</h1>
-        <h2>Często zadawane pytania:</h2>
-        <p style="text-weight: bold;">Czym jest LoreNest?</p>
-        <p>LoreNest jest to aplikacja ułatwiająca użytkownikom w całej polsce znajdowanie korepetytorów/nauczycieli prywatnych, którzy mogą pomóc w nauce.</p>
-        <br><br>
-        <p style="text-weight: bold;">Ile kosztuje członkowstwo?</p>
-        <p>Członkowstwo jest bezpłatne, jedynymi opłatami jakie może ponieść użytkownik to opłaty za lekcje prowadzone przez nauczycieli pochodzących z naszej platformy</p>
-        <br><br>
-        <p style="text-weight: bold;">Jak mogę skontaktować się z osobą świadczącą pomoc?</p>
-        <p>Aby skontaktować się z osobą świadczącą pomoc, wystarczy że skopiujesz mail podany w nagłówku wiadomości, a następnie napiszesz do niej maila</p>
-        <br><br>
-        <p style="text-weight: bold;">Kto może ogłaszać się jako nauczyciel?</p>
-        <p>Jako nauczyciel może ogłaszać się każda osoba, która ma zakres wiedzy w temacie na który jest zapotrzebowanie, lecz jeśli osoba, która świadczy usługi nie wykazuje się taką wiedzą i zostanie zgłoszona, jej konto może zostać permanentnie zbanowane</p>
-        <br><br>
-        <p style="text-weight: bold;">Straciłem hasło, jak mogę je zresetować?</p>
-        <p>Aby zresetować hasło przejdź do zakładki ustawienia i tam w odpowiednim polu wpisz nowe hasło</p>
-        <br><br>
-        <p style="text-weight: bold">Straciłem dostęp do konta, czy mogę je odzyskać></p>
-        <p>Nie ma możliwości odzyskania dostępu do utraconego konta, w takim przypadku prosimy wysłać prośbę o usunięcie go na maila supportu, a następnie po +- dobie utworzenie nowego konta</p>
+        <div id="faq-cont">
+            <h1>FAQ</h1>
+            <h2>Często zadawane pytania:</h2>
+            <p style="text-weight: bold;">Czym jest LoreNest?</p>
+            <p>LoreNest jest to aplikacja ułatwiająca użytkownikom znajdowanie korepetytorów/nauczycieli prywatnych, którzy mogą pomóc w nauce.</p>
+            <br><br>
+            <p style="text-weight: bold;">Ile kosztuje członkowstwo?</p>
+            <p>Członkowstwo jest bezpłatne, jedynymi opłatami jakie może ponieść użytkownik to opłaty za lekcje prowadzone przez nauczycieli pochodzących z naszej platformy</p>
+            <br><br>
+            <p style="text-weight: bold;">Jak mogę skontaktować się z osobą świadczącą pomoc?</p>
+            <p>Aby skontaktować się z osobą świadczącą pomoc, wystarczy że skopiujesz mail podany w nagłówku wiadomości, a następnie napiszesz do niej maila</p>
+            <br><br>
+            <p style="text-weight: bold;">Kto może ogłaszać się jako nauczyciel?</p>
+            <p>Jako nauczyciel może ogłaszać się każda osoba, która ma zakres wiedzy w temacie na który jest zapotrzebowanie, lecz jeśli osoba, która świadczy usługi nie wykazuje się taką wiedzą i zostanie zgłoszona, jej konto może zostać permanentnie zbanowane</p>
+            <br><br>
+            <p style="text-weight: bold;">Straciłem hasło, jak mogę je zresetować?</p>
+            <p>Aby zresetować hasło przejdź do zakładki ustawienia i tam w odpowiednim polu wpisz nowe hasło</p>
+            <br><br>
+            <p style="text-weight: bold">Straciłem dostęp do konta, czy mogę je odzyskać></p>
+            <p>Nie ma możliwości odzyskania dostępu do utraconego konta, w takim przypadku prosimy wysłać prośbę o usunięcie go na maila supportu, a następnie po +- dobie utworzenie nowego konta</p>
+        </div>
         <div class="back-button" onclick="loadPosts()"></div>`;
 }
+function loadChat() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+    .chat-box {
+        --neon-primary: #0ff0fc;
+        --neon-secondary: #ff00ff;
+        width: 420px;
+        min-height: 300px;
+        height: auto;
+        padding-top: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-bottom: 30px !important;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        background: 
+            linear-gradient(145deg, #111827, #1f2937),
+            radial-gradient(circle at 75% 30%, #0ff0fc, transparent 70%),
+            radial-gradient(circle at 25% 70%, #ff00ff, transparent 70%);
+        box-shadow: 
+            0 0 15px rgba(15, 240, 252, 0.3),
+            0 0 30px rgba(255, 0, 255, 0.2),
+            0 0 60px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        animation: pulse-glow 6s infinite alternate;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .chat-box-input-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .chat-box input[type="text"] {
+        width: 100%; 
+        font-size: 30px;
+        margin-bottom: 10px;
+        padding: 12px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        display: block;
+        margin: 0; 
+    }
+    .chat-box input[type="text"]:focus {
+        outline: none;
+        border-color: var(--neon-primary);
+        box-shadow: 
+            inset 0 0 15px rgba(15, 240, 252, 0.5),
+            0 0 10px rgba(15, 240, 252, 0.3);
+        background: rgba(0, 0, 0, 0.5);
+    }
+    .chat-box input[type="text"]::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+        font-style: italic;
+    }
+    .chat-box button {
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary));
+        color: black;
+        font-size: 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(15, 240, 252, 0.5);
+        width: 100%;
+        font-family: inherit;
+        margin-top: 5px;
+    }
+    .chat-box button:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 0 20px rgba(15, 240, 252, 0.8),
+            0 0 30px rgba(255, 0, 255, 0.6);
+    }
+    .chat-box button:hover::before {
+        left: 100%;
+    }
+    .chat-box button:active {
+        transform: translateY(1px);
+    }
+    .chat-box p {
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        position: relative;
+        padding-left: 15px;
+        font-size: 22px;
+    }
+    .chat-box p::before {
+        line-height: 1.6;
+        content: '>';
+        left: 0;
+        color: var(--neon-primary);
+        position: absolute;
+        margin-left: 0; 
+    }
+    .typing-animation {
+        display: inline-block;
+        white-space: nowrap;
+        border-right: 3px solid var(--neon-primary);
+        animation: typing 3s steps(30) 1s forwards, blink 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+        from {
+            width: 0;
+        }
+        to {
+            width: 100%;
+        }
+    }
+    @keyframes blink {
+        0% {
+            border-color: transparent;
+        }
+        50% {
+            border-color: var(--neon-primary);
+        }
+        100% {
+            border-color: transparent;
+        }
+    }
+    @keyframes pulse-glow {
+        0% {
+            box-shadow: 
+                0 0 15px rgba(15, 240, 252, 0.3),
+                0 0 30px rgba(255, 0, 255, 0.2);
+        }
+        100% {
+            box-shadow: 
+                0 0 25px rgba(15, 240, 252, 0.5),
+                0 0 50px rgba(255, 0, 255, 0.3);
+        }
+    }
+    @keyframes shine {
+        0% {
+            transform: rotate(30deg) translate(-10%, -10%);
+        }
+        100% {
+            transform: rotate(30deg) translate(10%, 10%);
+        }
+    }
+    `;
+    document.head.appendChild(style);
+    document.querySelector('.main-content').innerHTML = `
+    <div id="chat-cont"> 
+        <div class="chat-box">
+            <input type="text" id="user-input" placeholder="Witaj, będę Ci asystował">
+            <button onclick="sendChat()">ASK ME</button>
+            <p id="response"></p>
+        </div>
+    </div>
+    <div class="back-button" onclick="loadPosts()"></div>`;
+    
+}
+function sendChat() {
+            const userInput = document.getElementById('user-input').value;
+            fetch('http://localhost:5000/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseText = data.response || data.error;
+                const responseElement = document.getElementById('response');
+                responseElement.innerHTML = '';
+                typeWriter(responseElement, responseText);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function typeWriter(element, text, i = 0) {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(() => typeWriter(element, text, i), 50);
+            }
+        }
+
+
 
 function loadRules() {
     document.querySelector('.main-content').innerHTML = `
-        <h1>Regulamin</h1>
-        <ul>
-            <li>Każdy użytkownik musi przestrzegać zasad społeczności.</li>
-            <li>Publikowanie treści wulgarnych lub obraźliwych jest zabronione.</li>
-            <li>Użytkownicy są odpowiedzialni za swoje działania na platformie.</li>
-            <li>Zakazuje się udostępniania nielegalnych treści lub plików.</li>
-            <li>Każdy użytkownik może usunąć swoje konto w dowolnym momencie.</li>
-        </ul>
+        <div id="regulamin-cont">
+            <h1>Regulamin</h1>
+            <ul>
+                <li>Każdy użytkownik musi przestrzegać zasad społeczności.</li>
+                <li>Publikowanie treści wulgarnych lub obraźliwych jest zabronione.</li>
+                <li>Użytkownicy są odpowiedzialni za swoje działania na platformie.</li>
+                <li>Zakazuje się udostępniania nielegalnych treści lub plików.</li>
+                <li>Każdy użytkownik może usunąć swoje konto w dowolnym momencie.</li>
+            </ul>
+        </div>
         <div class="back-button" onclick="loadPosts()"></div>`;
 }
 
@@ -831,7 +1026,6 @@ function checkBannedWords(content) {
     }
     return null;
 }
-// Event listener dla pola "content"
 document.getElementById('content').addEventListener('input', function() {
     const content = this.value;
     const bannedWord = checkBannedWords(content);
