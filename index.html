@@ -5,12 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Witaj w LoreNest</title>
-  <link rel="icon" href="logo720.png" type="image/x-icon">
+  <link rel="icon" href="logo720.webp" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="index.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="index.css?v=<?= time() ?>">
 </head>
 
 <body>
@@ -56,7 +56,6 @@
   </section>
 
   <script>
-    // Three.js background animation
     const canvas = document.getElementById('canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -64,8 +63,6 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
-    
-    // Create particles
     const particlesGeometry = new THREE.BufferGeometry();
     const particleCount = 1000;
     
@@ -87,8 +84,6 @@
     
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
-    
-    // Animation loop
     function animate() {
       requestAnimationFrame(animate);
       
@@ -99,11 +94,7 @@
     }
     
     animate();
-    
-    // GSAP animations
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Hero section animations
     gsap.to('.main-title', {
       opacity: 1,
       y: 0,
@@ -127,7 +118,6 @@
       ease: 'power3.out',
       delay: 0.9
     });
-    
     gsap.utils.toArray('.feature-card').forEach((card, i) => {
       gsap.fromTo(card, 
         { opacity: 0, y: 50 },
@@ -136,12 +126,7 @@
           y: 0,
           duration: 0.8,
           ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.features',
-            start: 'top 70%',
-            toggleActions: 'play none none none',
-            delay: i * 0.2
-          }
+          delay: i * 0.2 
         }
       );
     });
@@ -159,15 +144,11 @@
         duration: 0.3
       });
     });
-    
-    // Window resize handler
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    
-    // Page transition
     function animateOut() {
       gsap.to('body', {
         opacity: 0,
