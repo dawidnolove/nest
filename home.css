@@ -1106,3 +1106,10 @@ border: rgba(255,0,0,0.7) 0.5px solid;
     text-decoration: underline; 
     color: white; 
 }
+/* Na urządzeniach mobilnych (max-width: 768px) menu jest zawsze widoczne */
+@media screen and (max-width: 768px) {
+    /* Na telefonach menu jest zawsze widoczne */
+    .dropdown-content {
+        display: block; /* Menu na telefonach będzie widoczne od razu */
+    }
+
