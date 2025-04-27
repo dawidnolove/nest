@@ -844,8 +844,18 @@ document.getElementById('content').addEventListener('input', function() {
         messageElement.style.display = 'none';
     }
 });
+function toggleDropdown() {
+    var dropdownMenu = document.getElementById('dropdownMenu');
+    if (dropdownMenu.style.display === "block") {
+        dropdownMenu.style.display = "none"; 
+    } else {
+        dropdownMenu.style.display = "block"; 
+    }
+}
 </script>
 
 </body>
 </html>
+
+
 
