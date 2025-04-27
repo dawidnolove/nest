@@ -74,7 +74,7 @@ canvas {
 .logo {
     width: 80px; /* Powiększone logo */
     height: 80px;
-    background: url('logo720.png') center/contain no-repeat;
+    background: url('logo720.webp') center/contain no-repeat;
     filter: drop-shadow(0 0 10px rgb(255, 255, 255));
     cursor: pointer; /* Pokazuje że jest klikalne */
 }
@@ -99,7 +99,7 @@ canvas {
 .left-sidebar {
     position: fixed;
     top: 100px;
-    left: -240px; /* Schowany poza ekranem - można regulować szerokość */
+    left: 0px; /* Schowany poza ekranem - można regulować szerokość */
     width: 280px;
     height: calc(100vh - 100px);
     padding: 25px;
@@ -127,18 +127,12 @@ canvas {
 }
 
 /* Animacja wysuwania po najechaniu */
-.left-sidebar:hover {
-    transform: translateX(250px); /* Wysuwa się o 250px - dostosuj do wartości left */
-}
 
 .right-sidebar:hover {
     transform: translateX(-250px); /* Wysuwa się o 250px - dostosuj do wartości right */
 }
 
 /* Opóźnione chowanie */
-.left-sidebar:not(:hover) {
-    transition-delay: 1s; /* Opóźnienie 3s przed schowaniem */
-}
 
 .right-sidebar:not(:hover) {
     transition-delay: 1s; /* Opóźnienie 3s przed schowaniem */
@@ -162,7 +156,9 @@ canvas {
 
 
 .main-content {
-    padding: 30px;
+    padding: 120px;
+    margin-left: 240px;
+    margin-right: 240px;
     background: rgba(10, 25, 47, 0.3);
     backdrop-filter: blur(3px);
 }
@@ -504,7 +500,7 @@ header {
 .logo {
     width: 80px;
     height: 80px;
-    background-image: url('logo720.png');
+    background-image: url('logo720.webp');
     background-size: cover;
     border-radius: 50%;
 }
