@@ -1,4 +1,4 @@
-CREATE DATABASE baza2;
+CREATE DATABASE baza2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE baza2;
 
 CREATE TABLE users (

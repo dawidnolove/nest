@@ -162,12 +162,36 @@ canvas {
     align-items: center;
 }
 .main-content {
+    background: black !important;
     padding: 120px;
     margin-left: 440px;
-    margin-right: 240px;
+    padding-right: 240px;
     background: rgba(10, 25, 47, 0.3);
     backdrop-filter: blur(3px);
 }
+html {
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-x: hidden;
+    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    overflow-y: scroll;   /* Hide horizontal scrollbar */
+  }
+body {
+    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    overflow-y: scroll;        /* ważne: scrollowanie nadal działa */
+  }
+  ::-webkit-scrollbar {
+    display: none;
+}
+  /* Chrome, Edge, Safari */
+  body::-webkit-scrollbar {
+    display: none;
+  }
+  body {
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+  }
 /* Przycisk powrotu */
 .back-button {
     position: fixed;
@@ -224,6 +248,7 @@ h1, h2, h3 {
 }
 
 .post p {
+    font-size: 25px;
     word-wrap: break-word; /* Umożliwia łamanie długich słów */
     white-space: pre-wrap; /* Pozwala na zachowanie łamania linii w tekście */
     max-height: 400px; /* Określa maksymalną wysokość kontenera na tekst */
@@ -327,6 +352,7 @@ h1, h2, h3 {
 }
 
 label {
+    font-size: 20px;
     display: block;
     margin-bottom: 5px;
     color: var(--primary);
@@ -697,9 +723,9 @@ footer {
     left: 55%;
     transform: translate(-50%, -50%);
     width: 450px;
-    max-height: 550px;
+    max-height: auto; /*ZAMINA*/
     height: auto;
-    background: rgba(0, 201, 183, 0.2);
+    background: rgba(0, 0, 0, 0.719);
     border-left: 4px solid var(--primary);
     padding: 20px;
     border-radius: 5px;
@@ -712,12 +738,12 @@ footer {
     display: none;
     position: fixed;
     top: 50%;
-    left: 50%;
+    left: 55%;
     transform: translate(-50%, -50%);
-    width: 350px;
-    max-height: 550px;
+    width: 450px;
+    max-height: auto; /*ZAMINA*/
     height: auto;
-    background: rgba(0, 201, 183, 0.2);
+    background: rgba(0, 0, 0, 0.719);
     border-left: 4px solid var(--primary);
     padding: 20px;
     border-radius: 5px;
@@ -728,7 +754,7 @@ footer {
 }
 .modal textarea {
     width: 100%;
-    height: 20px;
+    height: 40px;
     margin-bottom: 10px;
     background: #222;
     background: rgba(255, 255, 255, 0.05);
@@ -883,32 +909,32 @@ footer {
     margin: 10px auto;
     text-align: center;
     width: 200px; /* Określ szerokość przycisku */
-    }
-    .floating-icon {
-        animation: float 30s infinite linear;
-      }
+}
+.floating-icon {
+    animation: float 30s infinite linear;
+}
       
-      @keyframes float {
-        0% { transform: translateY(0) rotate(0deg); }
-        100% { transform: translateY(-100vh) rotate(360deg); }
-      }
+@keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-100vh) rotate(360deg); }
+}
     
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
     .add-post-btn {
     width: 100%; /* Na mniejszych ekranach przycisk zajmie całą szerokość */
-    }
-    }
-    .feature-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
+}
+}
+.feature-card {
+    background: rgba(255, 255, 255, 0.356);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
       
-      .feature-card:hover {
-        transform: translateY(-10px);
-        background: rgba(255, 255, 255, 0.1);
-      }
+.feature-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.1);
+}
 .search-container {
     display: flex;
     flex-direction: column;
@@ -1126,10 +1152,7 @@ border: rgba(255,0,0,0.7) 0.5px solid;
     text-decoration: underline; 
     color: white; 
 }
-/* Na urządzeniach mobilnych (max-width: 768px) menu jest zawsze widoczne */
-@media screen and (max-width: 768px) {
-    /* Na telefonach menu jest zawsze widoczne */
-    .dropdown-content {
-        display: block; /* Menu na telefonach będzie widoczne od razu */
-    }
+
+body {
+    max-height: 100vh;
 }

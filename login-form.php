@@ -55,6 +55,7 @@ session_start();
             </form>
             <div class="footer">
                 <p onclick="handleFlip()">Nie masz konta? <a href="#">Zarejestruj się</a></p>
+                <p class="fancy-text">LORENEST</p>
             </div>
         </div>
         
@@ -68,6 +69,7 @@ session_start();
             </form>
             <div class="footer">
                 <p onclick="handleFlip()">Masz już konto? <a href="#">Zaloguj się</a></p>
+                <p class="fancy-text">LORENEST</p>
             </div>
         </div>
         

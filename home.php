@@ -1,4 +1,14 @@
 <?php
+function isMobile() {
+    return preg_match('/android|iphone|blackberry|windows phone|opera mini|mobile/i', $_SERVER['HTTP_USER_AGENT']);
+}
+
+if (isMobile()) {
+    header('Location: mobilny.php');
+    exit();
+}
+?>
+<?php
 session_start();
 include("db.php");
 if (!isset($_SESSION['email'])) {
@@ -77,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $file_type = null;
 		   foreach ($banned_words as $word) {
             if (stripos($content, $word) !== false) {
-                throw new Exception(" ⛔ Treść zawiera zabronione słowo: '$word'.");
+                throw new Exception("Treść zawiera zabronione słowo: '$word'.");
             }
         }
         // Dodawanie pliku
@@ -91,11 +101,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 throw new Exception("Nieprawidłowe przesyłanie pliku");
             }
 
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'application/msword', 
-                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                            'application/pdf', 'application/vnd.ms-excel', 
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-                            'text/plain'];
+            $allowed_types = ['image/jpeg', 
+                              'image/png', 
+                              'image/gif', 
+                              'image/webp', 
+                              'application/msword', 
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                              'application/pdf', 
+                              'application/vnd.ms-excel', 
+                              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+                              'text/plain',
+                              'application/octet-stream'
+                        ];
 
             $max_size = 5 * 1024 * 1024;
 
@@ -103,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             $mime_type = finfo_file($finfo, $file_tmp);
             finfo_close($finfo);
 
-            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'txt'];
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'txt', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'txt', 'webp'];
             $file_extension = strtolower(pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION));
 
             if (!in_array($file_extension, $allowed_extensions)) {
@@ -144,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             ':subject' => $subject
         ]);
 
-        $_SESSION['message'] = " ✅  Post został dodany pomyślnie";
+        $_SESSION['message'] = "Post został dodany pomyślnie";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
 
@@ -273,7 +290,7 @@ if (isset($_SESSION['message'])) {
         <label for="edit_content">Treść posta:</label><br>
         <textarea id="edit_content" name="content" rows="4" cols="50" required></textarea><br><br>
         <label for="edit_attachment" id="edit-attach-label" style="cursor: pointer;">Załącz plik: (klik)</label>
-        <input type="file" id="edit_attachment" name="attachment" style="display: none;">
+        <input type="file" id="edit_attachment" name="attachment" accept=".jpg,.jpeg,.png,.gif,.doc,.docx,.pdf,.xls,.xlsx,.txt,.webp" style="display: none;">
         <div id="edit-file-info" class="file-info" style="display: none;">
             <span id="edit-file-name" class="file-name"></span>
             <span id="edit-remove-file" class="remove-file" title="Usuń plik">&times;</span>
@@ -293,7 +310,7 @@ if (isset($_SESSION['message'])) {
         <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
 
         <label for="attachment" id="attach-label" style="cursor: pointer;">Załącz plik: (klik)</label>
-        <input type="file" id="attachment" name="attachment" style="display: none;">
+        <input type="file" id="attachment" name="attachment" accept=".jpg,.jpeg,.png,.gif,.doc,.docx,.pdf,.xls,.xlsx,.txt,.webp" style="display: none;">
         <div id="file-info" class="file-info" style="display: none;">
             <span id="file-name" class="file-name"></span>
             <span id="remove-file" class="remove-file" title="Usuń plik">&times;</span>
@@ -348,7 +365,7 @@ if (isset($_SESSION['message'])) {
                 <button type="button" class="clear-btn" onclick="clearSearch()">Pokaż wszystkie</button> 
             </form>
             <div id="search-results"></div>
-            <div class="back-button" onclick="loadPosts()" hidden></div>
+            
         </div>
 
         <button class="add-post-btn" onclick="openModal()">Dodaj Post</button>
@@ -399,9 +416,23 @@ if (isset($_SESSION['message'])) {
     <?php endif; ?>
 </div>
     </div>
+    <div class="back-button" onclick="loadPosts()" hidden></div>
 </div>
 
+
+
+
+
 <script>
+    document.getElementById('attachment').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.doc|\.docx|\.pdf|\.xls|\.xlsx|\.txt|\.webp)$/i;
+    
+    if (!allowedExtensions.exec(file.name)) {
+        alert('Dozwolone są tylko pliki: JPG, PNG, GIF, DOC, PDF, XLS, TXT, WEBP');
+        e.target.value = ''; // Czyści wybór pliku
+    }
+});
     // Lista przedmiotów
 const subjects = [
     "Język polski", "Język angielski", "Język niemiecki", "Język francuski", "Język hiszpański",
@@ -599,8 +630,7 @@ function loadProfile() {
             <h2>Twoje Dane</h2>
             <p><label>Email:</label> <span><?php echo $localuseremail; ?></span></p>
            <p><label>Numer telefonu:</label> <span><?php echo $localuserphone; ?></span></p>
-        </div>
-        <div class="back-button" onclick="loadPosts()"></div>`;
+        </div>`;
 }
 
 function loadSettings() {
@@ -615,8 +645,7 @@ function loadSettings() {
             <div id="update-password-btn" style="display: none;">
                 <button onclick="updatePassword()" class="add-post-btn">Zaktualizuj hasło</button>
             </div>
-        </div>
-        <div class="back-button" onclick="loadPosts()"></div>`;
+        </div>`;
     
     document.getElementById("newPassword").addEventListener("input", checkPasswordStrength);
 }
@@ -628,8 +657,7 @@ function loadHelp() {
             <h2>Wprowadzenie do platformy</h2>
             <p>Nasza platforma pozwala uczniom pomagać sobie nawzajem w nauce czy nazwiązywać wartościowe kontakty.</p>
             <p>Nie pobeiramy opłat za ogloszenia lub członkostwo(narazie).</p>
-        </div>
-        <div class="back-button" onclick="loadPosts()"></div>`;
+        </div>`;
 }
 
 function loadFAQ() {
@@ -654,8 +682,7 @@ function loadFAQ() {
             <br><br>
             <p style="text-weight: bold">Straciłem dostęp do konta, czy mogę je odzyskać></p>
             <p>Nie ma możliwości odzyskania dostępu do utraconego konta, w takim przypadku prosimy wysłać prośbę o usunięcie go na maila supportu, a następnie po +- dobie utworzenie nowego konta</p>
-        </div>
-        <div class="back-button" onclick="loadPosts()"></div>`;
+        </div>`;
 }
 function loadChat() {
     const style = document.createElement('style');
@@ -823,8 +850,7 @@ function loadChat() {
             <button onclick="sendChat()">ASK ME</button>
             <p id="response"></p>
         </div>
-    </div>
-    <div class="back-button" onclick="loadPosts()"></div>`;
+    </div>`;
     
 }
 function sendChat() {
@@ -867,8 +893,7 @@ function loadRules() {
                 <li>Zakazuje się udostępniania nielegalnych treści lub plików.</li>
                 <li>Każdy użytkownik może usunąć swoje konto w dowolnym momencie.</li>
             </ul>
-        </div>
-        <div class="back-button" onclick="loadPosts()"></div>`;
+        </div>`;
 }
 
 function loadPosts() {
@@ -1050,6 +1075,3 @@ function toggleDropdown() {
 
 </body>
 </html>
-
-
-
