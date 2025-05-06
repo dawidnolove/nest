@@ -299,7 +299,6 @@ if (isset($_SESSION['message'])) {
         <button type="button" class="add-post-btn" onclick="closeEditModal()">Anuluj</button>
     </form>
 </div>
-
 <div id="postModal" class="modal">
     <h3>Dodaj nowy post</h3>
     <form action="home.php" method="POST" enctype="multipart/form-data">
@@ -332,7 +331,6 @@ if (isset($_SESSION['message'])) {
             <a href="javascript:void(0);" onclick="loadProfile()">Profil</a>
             <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
             <a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
-            <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
             <a href="javascript:void(0);" onclick="loadFAQ()">FAQ</a>
             <a href="https://github.com/dawidnolove/nest" target="blank">Github 
                 <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Github_logo_svg.svg/640px-Github_logo_svg.svg.png" width="16px">
@@ -346,28 +344,51 @@ if (isset($_SESSION['message'])) {
 
 <div class="layout">
     <div class="sidebar left-sidebar">
-        <a href="javascript:void(0);" onclick="loadProfile()">Profil</a>
-        <a href="javascript:void(0);" onclick="loadSettings()">Ustawienia</a>
-		<a href="javascript:void(0);" onclick="loadRules()">Zasady</a>
-        <a href="javascript:void(0);" onclick="loadHelp()">Pomoc</a>
-        <a href="javascript:void(0);" onclick="loadFAQ()">FAQ</a>
-        <p><a href="https://github.com/dawidnolove/nest" target="blank">Github <img id="icon-github" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"></a></p>
-        <p><a id="logout" href="logout.php">Wyloguj</a></p>
+        <a href="javascript:void(0);" onclick="loadProfile()">
+            <img src="https://img.icons8.com/ios-glyphs/24/user--v1.png" alt="Profil" style="vertical-align: middle;"> PROFIL
+        </a>
+        <a href="javascript:void(0);" onclick="loadSettings()">
+            <img src="https://img.icons8.com/ios-glyphs/24/settings.png" alt="Ustawienia" style="vertical-align: middle;"> USTAWIENIA
+        </a>
+        <a href="javascript:void(0);" onclick="loadMessages()">
+            <img src="https://img.icons8.com/ios-glyphs/24/000000/speech-bubble.png" alt="Czat" style="vertical-align: middle;">WIADOMOŚCI
+        </a>
+        <a href="javascript:void(0);" onclick="loadRules()">
+            <img src="https://img.icons8.com/ios-glyphs/24/rules.png" alt="Zasady" style="vertical-align: middle;"> ZASADY
+        </a>
+        <a href="javascript:void(0);" onclick="loadFAQ()">
+            <img src="https://img.icons8.com/ios-glyphs/24/faq.png" alt="FAQ" style="vertical-align: middle;"> FAQ
+        </a>
+        <p>
+            <a href="https://github.com/dawidnolove/nest" target="_blank">
+                <img src="https://img.icons8.com/ios-glyphs/24/github.png" alt="Github" style="vertical-align: middle;"> GITHUB
+            </a>
+        </p>
+        <p>
+            <a id="logout" href="logout.php">
+                <img src="https://img.icons8.com/ios-glyphs/24/logout-rounded.png" alt="Wyloguj" style="vertical-align: middle;"> WYLOGUJ SIĘ
+            </a>
+        </p>
         <h1>&copy;</h1>
-        <a href="javascript:void(0);" onclick="loadChat()" id="chatButton">BETA ML CHAT</a>
+        <a href="javascript:void(0);" onclick="loadChat()" id="chatButton">
+            <img src="https://img.icons8.com/ios-glyphs/24/chat.png" alt="Chat" style="vertical-align: middle;"> BETA ML CHAT
+        </a>
     </div>
     
+    
     <div class="main-content">
-        <h1>Posty użytkowników</h1>
-        <div class="search-container">
-            <form method="GET" action="home.php">
-                <input type="text" name="search" id="search-input" placeholder="Szukaj postów..." value="<?= htmlspecialchars($search_query) ?>" class="styled-input">
-                <button type="button" class="clear-btn" onclick="clearSearch()">Pokaż wszystkie</button> 
-            </form>
-            <div id="search-results"></div>
-            
+        <h1>Ściana postów</h1>
+        <div class="search-wrapper">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/search.png" alt="FAQ" style="vertical-align: middle;">
+            <div class="search-container">
+                <form method="GET" action="home.php">
+                    <input type="text" name="search" id="search-input" placeholder="Szukaj postów..." value="<?= htmlspecialchars($search_query) ?>" class="styled-input">
+                    <button type="button" class="clear-btn" onclick="clearSearch()">Pokaż wszystkie</button> 
+                </form>
+                <div id="search-results"></div>
+                
+            </div>
         </div>
-
         <button class="add-post-btn" onclick="openModal()">Dodaj Post</button>
         
 <div id="postsContainer">
@@ -424,6 +445,23 @@ if (isset($_SESSION['message'])) {
 
 
 <script>
+    document.addEventListener(
+    'click',
+    function handleClickOutsideBox(event) {
+        const box = document.getElementById('postModal');
+
+        // Jeśli kliknięto poza modalem i NIE kliknięto w przycisk 'add-post-btn'
+        if (
+        box.style.display === 'block' && // upewniamy się, że modal jest widoczny
+        !box.contains(event.target) &&
+        !event.target.classList.contains('add-post-btn')
+        ) {
+        box.style.display = 'none';
+        }
+    }
+    );
+
+
     document.getElementById('attachment').addEventListener('change', function(e) {
     const file = e.target.files[0];
     const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.doc|\.docx|\.pdf|\.xls|\.xlsx|\.txt|\.webp)$/i;
@@ -624,10 +662,127 @@ function confirmDelete(postId) {
     });
 }
 
+
+
+
+function loadMessages() {
+    document.querySelector('.main-content').innerHTML = `
+        <div id="messages-cont">
+            <div id="messageModal" style="position:fixed; top:10%; left:50%; transform:translateX(-50%); background:white; border:1px solid #ccc; padding:20px; width:400px; z-index:9999;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Wiadomości</h3>
+                    <button onclick="startNewConversation()" title="Nowa wiadomość" style="font-size:20px;">➕</button>
+                </div>
+                <hr>
+                <div id="conversations-list">
+                    <p>Ładowanie konwersacji...</p>
+                </div>
+            </div>
+        </div>
+    `;
+    fetchConversations();
+}
+
+function fetchConversations() {
+fetch('get_conversations.php')// lub jak niedziala get\_conversations.php
+.then(res => res.text())
+.then(html => {
+document.getElementById('messages-cont').innerHTML = html;
+});
+}
+function startNewMessage() {
+alert('formularz nowej wiadomości');
+}
+
+function openConversation(otherEmail) {
+alert("Otwieram rozmowę z: " + otherEmail);
+}
+function showNewConversationForm() {
+const modal = document.createElement('div');
+modal.innerHTML = `         <div style="position:fixed; top:0; left:0; width:100%; height:100%;
+                    background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">             <div style="background:#fff; padding:20px; border-radius:5px;">                 <h3>Nowa wiadomość</h3>                 <input type="text" id="recipient-email" placeholder="E-mail odbiorcy" />                 <br><br>                 <button onclick="startConversation()">Rozpocznij</button>                 <button onclick="this.closest('div').parentNode.remove()">Anuluj</button>             </div>         </div>
+    `;
+document.body.appendChild(modal);
+}
+function startNewConversation() {
+fetch('get\_user\_list.php')
+.then(res => res.json())
+.then(users => {
+document.getElementById('modal-body').innerHTML = `                 <h3>Nowa wiadomość</h3>                 <input type="text" id="user-search" placeholder="Wpisz email..." oninput="filterUserList()" style="width:100%;margin-bottom:10px;">                 <div id="user-list" style="max-height:200px;overflow-y:auto;"></div>
+            `;
+const listDiv = document.getElementById('user-list');
+users.forEach(email => {
+const div = document.createElement('div');
+div.textContent = email;
+div.style = "padding:5px;cursor\:pointer;border-bottom:1px solid #ccc;";
+div.onclick = () => {
+openConversation(email);
+closeModal(); // zamknij modal z listą
+};
+listDiv.appendChild(div);
+});
+document.getElementById('modal').style.display = 'block';
+});
+}
+function startConversation() {
+const email = document.getElementById('recipient-email').value.trim();
+if (!email) {
+alert("Podaj e-mail odbiorcy.");
+return;
+}
+
+}
+function openConversation(otherEmail) {
+fetch('get\_messages.php?with=' + encodeURIComponent(otherEmail))
+.then(res => res.text())
+.then(html => {
+const modal = document.createElement('div');
+modal.innerHTML = `                 <div style="position:fixed; top:0; left:0; width:100%; height:100%;
+                            background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">                     <div style="background:#fff; padding:20px; width:400px; height:500px; overflow-y:auto; display:flex; flex-direction:column;">                         <div id="conversation-messages" style="flex:1; overflow-y:auto; margin-bottom:10px;">
+                            ${html}                         </div>                         <div style="display:flex;">                             <input type="text" id="new-message-input" style="flex:1;" placeholder="Wpisz wiadomość..." />                             <button onclick="sendMessage('${otherEmail}')">Wyślij</button>                         </div>                         <button onclick="this.closest('div[style*=\'position:fixed\']').remove()">Zamknij</button>                     </div>                 </div>
+            `;
+document.body.appendChild(modal);
+});
+}
+function sendMessage(otherEmail) {
+    const input = document.getElementById('new-message-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    fetch('send_messages.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `to=${encodeURIComponent(otherEmail)}&message=${encodeURIComponent(msg)}`
+    })
+    .then(res => res.text())
+    .then(resp => {
+        if (resp.trim() === 'OK') {
+            input.value = '';
+            openConversation(otherEmail); // odśwież rozmowę
+        } else {
+            alert('Błąd wysyłania: ' + resp);
+        }
+    });
+
+}
+function filterUserList() {
+const search = document.getElementById('user-search').value.toLowerCase();
+const items = document.querySelectorAll('#user-list div');
+items.forEach(div => {
+const match = div.textContent.toLowerCase().includes(search);
+div.style.display = match ? 'block' : 'none';
+});
+}
+
+
+
+
+
+
 function loadProfile() {
     document.querySelector('.main-content').innerHTML = `
         <div class="user-info">
-            <h2>Twoje Dane</h2>
+            <h1>Twoje Dane</h1>
             <p><label>Email:</label> <span><?php echo $localuseremail; ?></span></p>
            <p><label>Numer telefonu:</label> <span><?php echo $localuserphone; ?></span></p>
         </div>`;
@@ -636,7 +791,7 @@ function loadProfile() {
 function loadSettings() {
     document.querySelector('.main-content').innerHTML = ` 
         <div class="settings-section">
-            <h2>Ustawienia konta</h2>
+            <h1>Ustawienia konta</h1>
             <label for="email">Adres email:</label>
             <input type="email" id="email" value="<?php echo $localuseremail; ?>" readonly>
             <label for="newPassword">Zapomniałeś hasła?</label>
@@ -650,21 +805,11 @@ function loadSettings() {
     document.getElementById("newPassword").addEventListener("input", checkPasswordStrength);
 }
 
-function loadHelp() {
-    document.querySelector('.main-content').innerHTML = `
-        <div id="pomoc-cont">
-            <h1>Pomoc</h1>
-            <h2>Wprowadzenie do platformy</h2>
-            <p>Nasza platforma pozwala uczniom pomagać sobie nawzajem w nauce czy nazwiązywać wartościowe kontakty.</p>
-            <p>Nie pobeiramy opłat za ogloszenia lub członkostwo(narazie).</p>
-        </div>`;
-}
 
 function loadFAQ() {
     document.querySelector('.main-content').innerHTML = `
         <div id="faq-cont">
             <h1>FAQ</h1>
-            <h2>Często zadawane pytania:</h2>
             <p style="text-weight: bold;">Czym jest LoreNest?</p>
             <p>LoreNest jest to aplikacja ułatwiająca użytkownikom znajdowanie korepetytorów/nauczycieli prywatnych, którzy mogą pomóc w nauce.</p>
             <br><br>
@@ -887,11 +1032,10 @@ function loadRules() {
         <div id="regulamin-cont">
             <h1>Regulamin</h1>
             <ul>
-                <li>Każdy użytkownik musi przestrzegać zasad społeczności.</li>
+                <li>Każdy użytkownik musi zachowywać się tak jak należy w miejscu publicznym.</li>
                 <li>Publikowanie treści wulgarnych lub obraźliwych jest zabronione.</li>
-                <li>Użytkownicy są odpowiedzialni za swoje działania na platformie.</li>
-                <li>Zakazuje się udostępniania nielegalnych treści lub plików.</li>
-                <li>Każdy użytkownik może usunąć swoje konto w dowolnym momencie.</li>
+                <li>Użytkownicy są odpowiedzialni za swoje działania na platformie, a działanie na jej szkodę będzie obciążone odpowiedzialnością.</li>
+                <li>Zakazuje się sprzedawania nielegalnych treści lub plików (chyba że za darmo wyślesz je adminom).</li>
             </ul>
         </div>`;
 }
