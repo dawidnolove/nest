@@ -28,6 +28,12 @@ function handleCredentialResponse(response){
     document.querySelector(".pro-data").classList.add("hidden"); 
   
   }
+  window.addEventListener('wheel', function(e) {
+    if (e.ctrlKey) {
+        e.preventDefault();
+    }
+  }, { passive: false });
+
   
   function handleLogin(event) {
   
@@ -36,10 +42,12 @@ function handleCredentialResponse(response){
   
     if (!validateEmail(email)) {
         alert("Niepoprawny email");
+        window.location.href = "login-form.php";
         return;
     }
     if (!validatePassword(password)) {
         alert("Hasło musi mieć minimum 8 znaków, w tym dużą literę i dwie cyfry");
+        window.location.href = "login-form.php";
         return;
     }
     fetch('login.php', {
