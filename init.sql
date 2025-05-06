@@ -1,6 +1,5 @@
 CREATE DATABASE baza2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE baza2;
-
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -8,11 +7,11 @@ CREATE TABLE users (
     phone VARCHAR(20) UNIQUE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 CREATE TABLE posts (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
+  subject VARCHAR(255) DEFAULT NULL,
   timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   file_path VARCHAR(255) DEFAULT NULL,
   file_type VARCHAR(50) DEFAULT NULL
@@ -24,4 +23,17 @@ CREATE TABLE admins (
     phone VARCHAR(20),  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-ALTER TABLE posts ADD COLUMN subject VARCHAR(255) DEFAULT NULL;
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_email VARCHAR(255),
+    receiver_email VARCHAR(255),
+    message TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE conversations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user1_id INT,
+    user2_id INT,
+    last_message TEXT,
+    last_updated DATETIME
+);
