@@ -4,7 +4,7 @@ session_start();
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <script src="https://accounts.google.com/gsi/client" async></script> <!--async defer-->
+    <script src="https://accounts.google.com/gsi/client" async></script><!--async defer-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
     <meta charset="utf-8" />
     <link rel="icon" href="favicon.ico" />
@@ -17,76 +17,85 @@ session_start();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    
+    <div class="main-container">
+        <img src="logo720.png" alt="Logo"/>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
 
-    <img src="logo720.png" width="150px" height="150px"/>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+        <?php if (isset($_SESSION['message'])): ?>
+        <div class="success-message" style="
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: rgba(0, 201, 183, 0.4);
+            border-left: 4px solid #00c9b7;
+            color: white;
+            z-index: 99999;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-out;
+        "><?= htmlspecialchars($_SESSION['message']) ?></div>
+        <?php unset($_SESSION['message']); ?>
+        <?php endif; ?>
 
-    <?php if (isset($_SESSION['message'])): ?>
-    <div class="success-message" style="
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 5px;
-        background: rgba(0, 201, 183, 0.4);
-        border-left: 4px solid #00c9b7;
-        color: white;
-        z-index: 99999;
-        max-width: 100%;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        animation: fadeIn 0.3s ease-out;
-    "><?= htmlspecialchars($_SESSION['message']) ?></div>
-    <?php unset($_SESSION['message']); ?>
-<?php endif; ?>
-
-    <div class="flip-card">
-        <!-- Reszta Twojego oryginalnego kodu pozostaje BEZ ZMIAN -->
-        <div class="login-container">
-            <h2>Logowanie</h2>
-            <form id="login-form" method="POST" action="login.php" onsubmit="handleLogin(event)">
-                <input type="email" id="login-mail" name="mail" placeholder="E-MAIL" required />
-                <input type="password" id="login-password" name="password" placeholder="HASŁO" required />
-                <input type="submit" value="Zaloguj się" />
-                <div id="login-error-message" style="color: red; display: none;"></div>
-            </form>
-            <div class="footer">
-                <p onclick="handleFlip()">Nie masz konta? <a href="#">Zarejestruj się</a></p>
-                <p class="fancy-text">LORENEST</p>
+        <div class="flip-card">
+            <div class="login-container">
+                <h2>Logowanie</h2>
+                <form id="login-form" method="POST" action="login.php" onsubmit="handleLogin(event)">
+                    <input type="email" id="login-mail" name="mail" placeholder="E-MAIL" required />
+                    <input type="password" id="login-password" name="password" placeholder="HASŁO" required />
+                    <input type="submit" value="Zaloguj się" />
+                    <div id="login-error-message" style="color: red; display: none;"></div>
+                </form>
+                <div class="footer">
+                    <p onclick="handleFlip()">Nie masz konta? <a href="#">Zarejestruj się</a></p>
+                    <p class="fancy-text">LORENEST</p>
+                </div>
+            </div>
+            
+            <div class="signup-container">
+                <h2>Rejestracja</h2>
+                <form id="signup-form" method="POST" action="register.php">
+                    <input type="email" id="signup-mail" name="email" placeholder="E-MAIL" required />
+                    <input type="password" id="signup-password" name="password" placeholder="HASŁO" required />
+                    <input type="tel" id="phone-number" name="phone" placeholder="TELEFON" required />
+                    <input type="submit" value="Zarejestruj się" />
+                </form>
+                <div class="footer">
+                    <p onclick="handleFlip()">Masz już konto? <a href="#">Zaloguj się</a></p>
+                    <p class="fancy-text">LORENEST</p>
+                </div>
             </div>
         </div>
-        
-        <div class="signup-container">
-            <h2>Rejestracja</h2>
-            <form id="signup-form" method="POST" action="register.php">
-                <input type="email" id="signup-mail" name="email" placeholder="E-MAIL" required />
-                <input type="password" id="signup-password" name="password" placeholder="HASŁO" required />
-                <input type="tel" id="phone-number" name="phone" placeholder="TELEFON" required />
-                <input type="submit" value="Zarejestruj się" />
-            </form>
-            <div class="footer">
-                <p onclick="handleFlip()">Masz już konto? <a href="#">Zaloguj się</a></p>
-                <p class="fancy-text">LORENEST</p>
-            </div>
-        </div>
-        
     </div>
     <canvas id="particles-bg"></canvas>
-
     <script src="login-form.js"></script>
     <script>
+	window.addEventListener('wheel', function(e) {
+  	 if (e.ctrlKey) {
+    	  e.preventDefault();
+         }
+        }, { passive: false });
+
+	window.addEventListener('keydown', function(e) {
+  		if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=')) {
+    			e.preventDefault();
+  		}
+	});
+
+
         const successMessage = document.querySelector('.success-message');
-    if (successMessage) {
-        setTimeout(function() {
-            successMessage.style.opacity = '0';
-            setTimeout(() => successMessage.remove(), 300);
-        }, 5000);
-    }
+        if (successMessage) {
+            setTimeout(function() {
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 300);
+            }, 5000);
+        }
         
-        // NEW: Animacja cząsteczek (identyczna jak w welcome.html)
         const canvas = document.getElementById('particles-bg');
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -123,11 +132,16 @@ session_start();
         }
         animate();
 
-        // Reszta Twojego oryginalnego JS (handleFlip itd.)
         function handleFlip() {
             const flipCard = document.querySelector('.flip-card');
             flipCard.classList.toggle('flipped');
         }
+        
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
