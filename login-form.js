@@ -1,5 +1,5 @@
 function handleCredentialResponse(response){
-    fetch("auth.php", { //było auth_init.php
+    fetch("auth.php", {
       method: "POST",
       headers: { "Content-Type": "application/json"},
       body: JSON.stringify({request_type: 'user_auth', credential: response.credential })

@@ -1,0 +1,13 @@
+Copyright (c) 2025 Dawid Piechówka
+
+All rights reserved.
+
+This source code is proprietary and confidential. Any form of copying, use, reproduction, distribution, or modification of this code is strictly prohibited under any circumstances.
+
+No permission is granted to use, reproduce, or distribute this code in any way — not in part, not in whole. This applies universally, including but not limited to personal, educational, or commercial purposes.
+
+No exceptions will be granted, including through written request or email inquiry. Do not contact me for permission — none will be granted.
+
+Only possible exception is processing and sharing this project as part of SCI++ contest by it' organizators.
+
+Violation of these terms constitutes infringement of copyright and may result in legal action.

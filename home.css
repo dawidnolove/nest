@@ -67,16 +67,16 @@ canvas {
 
 
 .logo {
-    width: 80px; /* Powiększone logo */
+    width: 80px; 
     height: 80px;
     background: url('logo720.webp') center/contain no-repeat;
     filter: drop-shadow(0 0 10px rgb(255, 255, 255));
-    cursor: pointer; /* Pokazuje że jest klikalne */
+    cursor: pointer;
 }
 
 .layout {
     display: grid;
-    grid-template-columns: 280px 1fr 280px; /* Szersze sidebar-y */
+    grid-template-columns: 280px 1fr 280px;
     min-height: calc(100vh - 100px);
 }
 
@@ -94,7 +94,7 @@ canvas {
 .left-sidebar {
     position: fixed;
     top: 100px;
-    left: 0px; /* Schowany poza ekranem - można regulować szerokość */
+    left: 0px;
     max-width: 400px;
     height: calc(100vh - 100px);
     padding: 25px;
@@ -109,7 +109,7 @@ canvas {
 .right-sidebar {
     position: fixed;
     top: 100px;
-    right: -240px; /* Schowany poza ekranem - można regulować szerokość */
+    right: -240px; 
     width: 280px;
     height: calc(100vh - 100px);
     padding: 25px;
@@ -121,24 +121,22 @@ canvas {
     overflow-y: auto;
 }
 
-/* Animacja wysuwania po najechaniu */
 
 .right-sidebar:hover {
-    transform: translateX(-250px); /* Wysuwa się o 250px - dostosuj do wartości right */
+    transform: translateX(-250px);
 }
 
-/* Opóźnione chowanie */
 
 .right-sidebar:not(:hover) {
-    transition-delay: 1s; /* Opóźnienie 3s przed schowaniem */
+    transition-delay: 1s; 
 }
 
 
 .sidebar a {
-    display: flex; /* Flexbox do wyrównania */
-    align-items: center; /* Wyśrodkowanie w pionie */
-    justify-content: center; /* Wyśrodkowanie w poziomie */
-    gap: 8px; /* Odstęp między ikoną a tekstem */
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 8px;
     
     color: var(--light);
     text-decoration: none;
@@ -171,29 +169,27 @@ canvas {
     backdrop-filter: blur(3px);
 }
 html {
-    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-y: hidden; 
     overflow-x: hidden;
-    scrollbar-width: none;     /* Firefox */
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    overflow-y: scroll;   /* Hide horizontal scrollbar */
+    scrollbar-width: none;    
+    -ms-overflow-style: none; 
+    overflow-y: scroll;  
   }
 body {
-    scrollbar-width: none;     /* Firefox */
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    overflow-y: scroll;        /* ważne: scrollowanie nadal działa */
+    scrollbar-width: none;   
+    -ms-overflow-style: none; 
+    overflow-y: scroll;       
   }
   ::-webkit-scrollbar {
     display: none;
 }
-  /* Chrome, Edge, Safari */
   body::-webkit-scrollbar {
     display: none;
   }
   body {
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-y: hidden;
+    overflow-x: hidden; 
   }
-/* Przycisk powrotu */
 .back-button {
     position: fixed;
     bottom: 30px;
@@ -217,9 +213,9 @@ body {
 }
 
 .back-button::before {
-    content: "\f104";  /* FontAwesome back arrow */
-    font-family: "Font Awesome 5 Free"; /* Specify FontAwesome font */
-    font-weight: 900; /* Make the icon bold */
+    content: "\f104";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
     color: white;
     font-size: 24px;
 }
@@ -245,15 +241,15 @@ h1, h2, h3 {
     box-shadow: var(--shadow);
     transition: var(--transition);
     border-left: 4px solid var(--primary-color);
-    overflow: hidden; /* Zapewnia, że nadmiarowy tekst zostanie ukryty, jeśli jest za długi */
+    overflow: hidden;
 }
 
 .post p {
     font-size: 25px;
-    word-wrap: break-word; /* Umożliwia łamanie długich słów */
-    white-space: pre-wrap; /* Pozwala na zachowanie łamania linii w tekście */
-    max-height: 400px; /* Określa maksymalną wysokość kontenera na tekst */
-    overflow-y: auto; /* Pojawi się pasek przewijania, gdy tekst przekroczy max-height */
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
   
@@ -618,19 +614,19 @@ h1 {
     height: 15px;
 }
 .styled-input {
-    background-color: #333; /* Lekko szare tło */
-    border: 1px solid #ccc; /* Szary obramowanie */
-    border-radius: 10px; /* Zaokrąglone rogi */
-    padding: 10px; /* Wewnętrzny odstęp */
-    font-size: 16px; /* Rozmiar czcionki */
-    width: 100%; /* Możesz dostosować szerokość */
-    box-sizing: border-box; /* Uwzględnia padding w szerokości */
+    background-color: #333;
+    border: 1px solid #ccc;
+    border-radius: 10px; 
+    padding: 10px; 
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .styled-input:focus {
-    outline: none; /* Usuwa domyślny obrys po kliknięciu */
-    border-color: #888; /* Zmienia kolor obramowania przy focusie */
-    background-color: #333; /* Ciemniejsze tło przy focusie */
+    outline: none; 
+    border-color: #888;
+    background-color: #333;
   }
 .timestamp {
     position: absolute;
@@ -716,6 +712,26 @@ footer {
         radial-gradient(circle at 75% 30%, #0ff0fc, transparent 70%),
         radial-gradient(circle at 25% 70%, #ff00ff, transparent 70%) !important;
 }
+#modal-new-msg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(500px, 90vw);
+    max-height: 60vh;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(0, 201, 183, 0.3);
+    padding: min(30px, 5vw);
+    border-radius: 10px;
+    box-shadow: 0px 4px 30px rgba(0, 201, 183, 0.3);
+    z-index: 1000;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    animation: modalFadeIn 0.3s ease-out;
+
+}
 #postModal {
     display: none;
     position: fixed;
@@ -793,7 +809,6 @@ footer {
     background: transparent;
 }
 
-/* Responsywność */
 @media (max-width: 600px) {
     #postModal {
         width: 95vw;
@@ -828,26 +843,6 @@ footer {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     animation: modalFadeIn 0.3s ease-out;
 }
-/*
-#editPostModal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 55%;
-    transform: translate(-50%, -50%);
-    width: 450px;
-    max-height: auto; 
-    height: auto;
-    background: rgba(0, 0, 0, 0.719);
-    border-left: 4px solid var(--primary);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 3px 10px #000;
-    z-index: 1000;
-    overflow-y: auto;
-    backdrop-filter: blur(20px);
-}
-*/
 .modal textarea {
     width: 100%;
     height: 40px;
@@ -904,7 +899,7 @@ footer {
     align-items: center;
     gap: 8px;
     margin-top: 5px;
-    color: #000; /* Czarny tekst */
+    color: #000;
 }
 
 .file-name {
@@ -1005,7 +1000,7 @@ footer {
     display: block;
     margin: 10px auto;
     text-align: center;
-    width: 300px; /* Określ szerokość przycisku */
+    width: 300px;
 }
 .floating-icon {
     animation: float 30s infinite linear;
@@ -1018,7 +1013,7 @@ footer {
     
 @media (max-width: 768px) {
     .add-post-btn {
-    width: 100%; /* Na mniejszych ekranach przycisk zajmie całą szerokość */
+    width: 100%;
 }
 }
 .feature-card {
@@ -1122,7 +1117,6 @@ cursor: pointer;
 color: #00aaff;
 text-decoration: underline;
 }
-/* Styl sekcji ustawień */
 .settings-section {
 font-size: 20px;
 margin-top: 20px;
@@ -1217,26 +1211,24 @@ background: linear-gradient(45deg, #c34141, #00c9b7) !important;
         padding: 15px;
         display: block;
         text-decoration: none;
-        font-size: 18px; /* Większy tekst */
+        font-size: 18px;
     }
     
     .dropdown-content a:hover {
         background-color: white;
         background: linear-gradient(45deg, #0066cc, #00c9b7);
- /* Zmiana koloru tekstu na biały po najechaniu */
     }
     
-    /* Pokazuje dropdown */
     .show {
         display: block;
     }
     
-    /* Centrowanie w headerze */
+
     .header {
         position: relative;
         width: 100%;
         height: 80px;
-        background-color: #f0f0f0; /* Kolor tła nagłówka */
+        background-color: #f0f0f0;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1244,7 +1236,7 @@ background: linear-gradient(45deg, #c34141, #00c9b7) !important;
 
 }
 .user-subject {
-    color: #ffffffc3; /* Biały tekst dla przedmiotu */
+    color: #ffffffc3;
     padding: 2px 8px;
     font-size: 15px;
     border-radius: 5px;

@@ -16,31 +16,20 @@ if (!isset($_SESSION['email'])) {
     header("Location: login-form.php");
     exit();
 }
-// Pobranie zabronionych słów z pliku
-//$banned_words_file = 'zakazane.txt';
-//$banned_words = file_exists($banned_words_file) ? file($banned_words_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
 $banned_words_url = 'https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/pl';
-
-// Pobierz zawartość pliku
 $banned_words_content = file_get_contents($banned_words_url);
 
-// Jeśli plik został pobrany poprawnie, przetwórz jego zawartość
 if ($banned_words_content !== false) {
-    // Podziel zawartość na linie
     $banned_words = explode("\n", $banned_words_content);
     
-    // Usuń puste linie
     $banned_words = array_filter($banned_words, function($word) {
         return !empty(trim($word));
     });
     
-    // Zresetuj klucze tablicy
     $banned_words = array_values($banned_words);
 } else {
-    // Jeśli nie udało się pobrać pliku, ustaw pustą tablicę
     $banned_words = [];
 }
-// Przekazanie zabronionych słów do JavaScript
 echo '<script>';
 echo 'const bannedWords = ' . json_encode($banned_words) . ';';
 echo '</script>';
@@ -76,7 +65,6 @@ function sanitizeInput($data) {
     return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
 }
 
-// Dodawanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'add_post') {
     try {
         $username = sanitizeInput($_POST['username']);
@@ -90,7 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 throw new Exception("Treść zawiera zabronione słowo: '$word'.");
             }
         }
-        // Dodawanie pliku
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
             $file_tmp = $_FILES['attachment']['tmp_name'];
             $file_name = sanitizeInput($_FILES['attachment']['name']);
@@ -169,7 +156,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-// edytowanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'edit_post') {
     try {
         $post_id = (int)$_POST['post_id'];
@@ -199,7 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-// usuwanie posta
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'delete_post') {
     try {
         $post_id = (int)$_POST['post_id'];
@@ -226,7 +211,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error = $e->getMessage();
     }
 }
-// wyszukiwanie
 $search_query = '';
 $posts = [];
 
@@ -242,7 +226,7 @@ try {
         $stmt->execute([
             ':search_content' => "%$search_query%",
             ':search_username' => "%$search_query%",
-            ':search_subject' => "%$search_query%"  // Wyszukiwanie po przedmiocie
+            ':search_subject' => "%$search_query%"
         ]);
     } else {
         $stmt = $pdo->query("SELECT id, username, content, timestamp, file_path, file_type, subject FROM posts ORDER BY timestamp DESC");
@@ -322,6 +306,11 @@ if (isset($_SESSION['message'])) {
         <button type="button" class="add-post-btn" onclick="closeModal()">Anuluj</button>
     </form>
 </div>
+<div id="modal-new-msg" style="display:none;">
+    <div id="modal-body" style="background:#000; border: 1px var(--light) solid; border-radius: 10px; padding:20px; width:400px;">
+    </div>
+</div>
+
 
 <header>
     <div class="logo" onclick="loadPosts()"></div>
@@ -350,7 +339,7 @@ if (isset($_SESSION['message'])) {
         <a href="javascript:void(0);" onclick="loadSettings()">
             <img src="https://img.icons8.com/ios-glyphs/24/settings.png" alt="Ustawienia" style="vertical-align: middle;"> USTAWIENIA
         </a>
-        <a href="javascript:void(0);" onclick="loadMessages()">
+        <a href="javascript:void(0);" onclick="fetchConversations()">
             <img src="https://img.icons8.com/ios-glyphs/24/000000/speech-bubble.png" alt="Czat" style="vertical-align: middle;">WIADOMOŚCI
         </a>
         <a href="javascript:void(0);" onclick="loadRules()">
@@ -449,10 +438,8 @@ if (isset($_SESSION['message'])) {
     'click',
     function handleClickOutsideBox(event) {
         const box = document.getElementById('postModal');
-
-        // Jeśli kliknięto poza modalem i NIE kliknięto w przycisk 'add-post-btn'
         if (
-        box.style.display === 'block' && // upewniamy się, że modal jest widoczny
+        box.style.display === 'block' && 
         !box.contains(event.target) &&
         !event.target.classList.contains('add-post-btn')
         ) {
@@ -468,10 +455,9 @@ if (isset($_SESSION['message'])) {
     
     if (!allowedExtensions.exec(file.name)) {
         alert('Dozwolone są tylko pliki: JPG, PNG, GIF, DOC, PDF, XLS, TXT, WEBP');
-        e.target.value = ''; // Czyści wybór pliku
+        e.target.value = '';
     }
 });
-    // Lista przedmiotów
 const subjects = [
     "Język polski", "Język angielski", "Język niemiecki", "Język francuski", "Język hiszpański",
     "Język rosyjski", "Język włoski", "Matematyka", "Matematyka rozszerzona", "Fizyka", "Fizyka rozszerzona",
@@ -491,18 +477,17 @@ const subjects = [
     "Technik reklamy"
 ];
 
-// Funkcja do filtrowania przedmiotów na podstawie wpisywanego tekstu
 function filterSubjects() {
     const input = document.getElementById("subject").value.toLowerCase();
     const suggestions = document.getElementById("suggestions");
-    suggestions.innerHTML = ''; // Czyszczenie poprzednich sugestii
-    suggestions.style.display = 'none'; // Ukrycie kontenera z sugestiami
+    suggestions.innerHTML = '';
+    suggestions.style.display = 'none';
 
     if (input) {
         const filteredSubjects = subjects.filter(subject => subject.toLowerCase().includes(input));
         
         if (filteredSubjects.length > 0) {
-            suggestions.style.display = 'block'; // Pokaż kontener z sugestiami
+            suggestions.style.display = 'block';
             filteredSubjects.forEach(subject => {
                 const div = document.createElement('div');
                 div.textContent = subject;
@@ -510,7 +495,7 @@ function filterSubjects() {
                 div.style.cursor = 'pointer';
                 div.addEventListener('click', function() {
                     document.getElementById('subject').value = subject;
-                    suggestions.innerHTML = ''; // Wyczyść sugestie po wyborze
+                    suggestions.innerHTML = '';
                     suggestions.style.display = 'none';
                 });
                 suggestions.appendChild(div);
@@ -661,14 +646,10 @@ function confirmDelete(postId) {
         }
     });
 }
-
-
-
-
-function loadMessages() {
+function fetchConversations() {
     document.querySelector('.main-content').innerHTML = `
         <div id="messages-cont">
-            <div id="messageModal" style="position:fixed; top:10%; left:50%; transform:translateX(-50%); background:white; border:1px solid #ccc; padding:20px; width:400px; z-index:9999;">
+            <div id="messageModal" style="position:fixed; top:10%; left:50%; transform:translateX(-50%); background:#000; border: 1px var(--light) solid; border-radius: 10px; padding:20px; width:400px; z-index:9999;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3>Wiadomości</h3>
                     <button onclick="startNewConversation()" title="Nowa wiadomość" style="font-size:20px;">➕</button>
@@ -680,70 +661,104 @@ function loadMessages() {
             </div>
         </div>
     `;
-    fetchConversations();
+    fetch('get_conversations.php')
+        .then(res => res.text())
+        .then(html => {
+            if (html.trim() === '') {
+                document.getElementById('conversations-list').innerHTML = '<p>Brak konwersacji</p>';
+            } else {
+                document.getElementById('conversations-list').innerHTML = html;
+            }
+        })
+        .catch(error => {
+            console.error('Błąd przy ładowaniu konwersacji:', error);
+            document.getElementById('conversations-list').innerHTML = '<p>Wystąpił błąd podczas ładowania konwersacji</p>';
+        });
 }
 
-function fetchConversations() {
-fetch('get_conversations.php')// lub jak niedziala get\_conversations.php
-.then(res => res.text())
-.then(html => {
-document.getElementById('messages-cont').innerHTML = html;
-});
-}
+
+
 function startNewMessage() {
-alert('formularz nowej wiadomości');
+    alert('formularz nowej wiadomości');
 }
 
 function openConversation(otherEmail) {
-alert("Otwieram rozmowę z: " + otherEmail);
+    alert("Otwieram rozmowę z: " + otherEmail);
 }
+
 function showNewConversationForm() {
-const modal = document.createElement('div');
-modal.innerHTML = `         <div style="position:fixed; top:0; left:0; width:100%; height:100%;
-                    background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">             <div style="background:#fff; padding:20px; border-radius:5px;">                 <h3>Nowa wiadomość</h3>                 <input type="text" id="recipient-email" placeholder="E-mail odbiorcy" />                 <br><br>                 <button onclick="startConversation()">Rozpocznij</button>                 <button onclick="this.closest('div').parentNode.remove()">Anuluj</button>             </div>         </div>
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+        <div style="position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">
+            <div style="background:#000; padding:20px; border-radius:5px;">
+                <h3>Nowa wiadomość</h3>
+                <input type="text" id="recipient-email" placeholder="E-mail odbiorcy" />
+                <br><br>
+                <button onclick="startConversation()">Rozpocznij</button>
+                <button onclick="this.closest('div').parentNode.remove()">Anuluj</button>
+            </div>
+        </div>
     `;
-document.body.appendChild(modal);
-}
-function startNewConversation() {
-fetch('get\_user\_list.php')
-.then(res => res.json())
-.then(users => {
-document.getElementById('modal-body').innerHTML = `                 <h3>Nowa wiadomość</h3>                 <input type="text" id="user-search" placeholder="Wpisz email..." oninput="filterUserList()" style="width:100%;margin-bottom:10px;">                 <div id="user-list" style="max-height:200px;overflow-y:auto;"></div>
-            `;
-const listDiv = document.getElementById('user-list');
-users.forEach(email => {
-const div = document.createElement('div');
-div.textContent = email;
-div.style = "padding:5px;cursor\:pointer;border-bottom:1px solid #ccc;";
-div.onclick = () => {
-openConversation(email);
-closeModal(); // zamknij modal z listą
-};
-listDiv.appendChild(div);
-});
-document.getElementById('modal').style.display = 'block';
-});
-}
-function startConversation() {
-const email = document.getElementById('recipient-email').value.trim();
-if (!email) {
-alert("Podaj e-mail odbiorcy.");
-return;
+    document.body.appendChild(modal);
 }
 
-}
-function openConversation(otherEmail) {
-fetch('get\_messages.php?with=' + encodeURIComponent(otherEmail))
-.then(res => res.text())
-.then(html => {
-const modal = document.createElement('div');
-modal.innerHTML = `                 <div style="position:fixed; top:0; left:0; width:100%; height:100%;
-                            background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">                     <div style="background:#fff; padding:20px; width:400px; height:500px; overflow-y:auto; display:flex; flex-direction:column;">                         <div id="conversation-messages" style="flex:1; overflow-y:auto; margin-bottom:10px;">
-                            ${html}                         </div>                         <div style="display:flex;">                             <input type="text" id="new-message-input" style="flex:1;" placeholder="Wpisz wiadomość..." />                             <button onclick="sendMessage('${otherEmail}')">Wyślij</button>                         </div>                         <button onclick="this.closest('div[style*=\'position:fixed\']').remove()">Zamknij</button>                     </div>                 </div>
+function startNewConversation() {
+    fetch('get_user_list.php')
+        .then(res => res.json())
+        .then(users => {
+            document.getElementById('modal-body').innerHTML = `
+                <h3>Nowa wiadomość</h3>
+                <input type="text" id="user-search" placeholder="Wpisz email..." oninput="filterUserList()" style="width:100%;margin-bottom:10px;">
+                <div id="user-list" style="max-height:200px;overflow-y:auto;"></div>
             `;
-document.body.appendChild(modal);
-});
+            const listDiv = document.getElementById('user-list');
+            users.forEach(email => {
+                const div = document.createElement('div');
+                div.textContent = email;
+                div.style = "padding:5px;cursor:pointer;border-bottom:1px solid #ccc;";
+                div.onclick = () => {
+                    openConversation(email);
+                    document.getElementById('modal-new-msg').style.display = 'none';
+                };
+                listDiv.appendChild(div);
+            });
+            document.getElementById('modal-new-msg').style.display = 'block';
+        });
 }
+
+function startConversation() {
+    const email = document.getElementById('recipient-email').value.trim();
+    if (!email) {
+        alert("Podaj e-mail odbiorcy.");
+        return;
+    }
+}
+
+function openConversation(otherEmail) {
+    fetch('get_messages.php?with=' + encodeURIComponent(otherEmail))
+        .then(res => res.text())
+        .then(html => {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div id="convo-modal-parent" style="position:fixed; top:0; left:0; width:100%; height:100%;
+                    background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">
+                    <div id="convo-modal" style="background:#000; border: 1px var(--light) solid; border-radius: 10px; padding:20px; width:400px; height:500px; overflow-y:auto; display:flex; flex-direction:column;">
+                        <div id="conversation-messages" style="flex:1; overflow-y:auto; margin-bottom:10px;">
+                            ${html}
+                        </div>
+                        <div style="display:flex;">
+                            <input type="text" id="new-message-input" style="flex:1;" placeholder="Wpisz wiadomość..." />
+                            <button onclick="sendMessage('${otherEmail}')">Wyślij</button>
+                        </div>
+                        <button onclick=removeConvo()>Zamknij</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        });
+}
+
 function sendMessage(otherEmail) {
     const input = document.getElementById('new-message-input');
     const msg = input.value.trim();
@@ -754,16 +769,15 @@ function sendMessage(otherEmail) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `to=${encodeURIComponent(otherEmail)}&message=${encodeURIComponent(msg)}`
     })
-    .then(res => res.text())
-    .then(resp => {
-        if (resp.trim() === 'OK') {
-            input.value = '';
-            openConversation(otherEmail); // odśwież rozmowę
-        } else {
-            alert('Błąd wysyłania: ' + resp);
-        }
-    });
-
+        .then(res => res.text())
+        .then(resp => {
+            if (resp.trim() === 'OK') {
+                input.value = '';
+                openConversation(otherEmail);
+            } else {
+                alert('Błąd wysyłania: ' + resp);
+            }
+        });
 }
 function filterUserList() {
 const search = document.getElementById('user-search').value.toLowerCase();
@@ -775,7 +789,10 @@ div.style.display = match ? 'block' : 'none';
 }
 
 
-
+function removeConvo() {
+    document.getElementById('convo-modal').remove();
+    document.getElementById('convo-modal-parent').remove();
+}
 
 
 

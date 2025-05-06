@@ -1,0 +1,22 @@
+words = [
+    "pogoda", "jaka", "chociaż", "czemu", "jaki", "jakich", "Szczecin", "godzina", "dlaczego",
+    "kiedy", "gdzie", "jak", "co", "czy", "ile", "jakie", "jakby", "coś", "nic", "można",
+    "szukać", "pomóc", "czyli", "zawsze", "pewnie", "raczej", "chciałbym", "chciałabym", 
+    "proszę", "dziękuję", "odpowiedz", "rozmawiać", "rozmowa", "wiesz", "powiedz", "zrobić", 
+    "nie", "tak", "ottawa", "może", "wiem", "przepraszam", "zapytaj", "odpowiedź", "spróbuj", "szukam", 
+    "pomoc", "inteligencja", "rozwiązanie", "pomogę", "opowiedz", "pytanie", "odpowiedz", 
+    "po prostu", "zrozumiałem", "dlaczego", "także", "rozumiesz", "życie", "wiedza", "mówić",
+    "proces", "możliwości", "ucz się", "testować", "rozwiązywać", "sugestia", "przypomnienie",
+    "który", "analiza", "temat", "analizę", "którego", "które", "kogo", "myśl", "kto", 
+    "model", "algorytm", "technologia", "dane", "uczenie", "sytuacje", "społeczność", 
+    "pomoc", "problemy", "wskazówki", "wyjaśnienie", "post", "pomaga", "wytłumacz", 
+    "wskazówka", "człowiek", "osoba", "przykład", "poziom", "rozumienie", "ważne", "czemu", 
+    "opinia", "wybór", "dyskutować", "analizować", "sytuacja", "problem", "rozwiązanie", 
+    "zastosowanie", "sprawdzić", "rozwiązanie", "test", "poznaj", "innowacja", "metoda", 
+    "praca", "ekspert", "pojęcie", "termin", "wszystko", "nowy", "plan", "eksperyment", 
+    "strategia", "opinie", "perspektywa", "różnica", "lepszy", "bardziej", "czysta", "informatyka", 
+    "programowanie", "rozwiązywać", "wymaganie", "zachowanie", "opis", "trening", "nauka", 
+    "współpraca", "sensie", "opublikować", "można", "czego", "co", "mógłbym", "powinienem", "pomogłem",
+    "pomaga", "technologie", "zabezpiecza","bezpieczny","bezpieczna", "bezpieczeństwo", "algorytmy", "moduł", "aplikacji", "aplikacja", "tekst",
+    "miałbym", "miałabym", "mogłabym", "rozumiem", "rozumiesz", "pytania", "zrozumiałam", "rozumiałem"
+]
